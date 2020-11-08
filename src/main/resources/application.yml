@@ -1,0 +1,17 @@
+#log4JDBC
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/chat
+    username: postgres
+    password: postgres
+  flyway:
+    url: jdbc:postgresql://localhost:5432/chat
+    user: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+security:
+  jwt:
+    expirationTime: P2D #PT15M
