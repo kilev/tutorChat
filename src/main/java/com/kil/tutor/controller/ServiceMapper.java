@@ -10,6 +10,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public abstract class ServiceMapper {
 
@@ -18,6 +22,12 @@ public abstract class ServiceMapper {
     public abstract UserAuthRefreshRequest convert(RefreshRequest request);
 
     public abstract AuthResponse convert(UserAuth userAuth);
+
+    protected List<String> convert(Collection<? extends GrantedAuthority> authorities){
+        return authorities.stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
 
     private String convert(GrantedAuthority authority) {
         return authority.getAuthority();

@@ -1,11 +1,11 @@
 #log4JDBC
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/chat
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
   flyway:
-    url: jdbc:postgresql://localhost:5432/chat
+    url: jdbc:postgresql://localhost:5432/postgres
     user: postgres
     password: postgres
   jpa:

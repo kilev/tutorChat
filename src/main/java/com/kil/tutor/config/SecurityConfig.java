@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html",
                         "/webjars/**").permitAll()
 
-                .antMatchers( ANY_POSTFIX).permitAll()//TODO remove after cors fix
+                .antMatchers(ANY_POSTFIX).permitAll()//TODO remove after cors fix
                 .anyRequest()
                 .authenticated();
 
