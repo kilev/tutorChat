@@ -9,7 +9,7 @@ plugins {
 	id 'jp.classmethod.aws.cloudformation' version '0.41'
 }
 
-group = 'com.kil.tutor'
+group = scmVersion.version
 version = 'latest'
 sourceCompatibility = '11'
 
@@ -60,7 +60,8 @@ test {
 	useJUnitPlatform()
 }
 
-String imageName = "tutorchat-backend:$version"
+String dockerHubUsernameProperty = findProperty('dockerHubUsername') ?: 'tkgregory'
+String imageName = "${dockerHubUsernameProperty}/spring-boot-api-example:$version"
 
 docker {
 	name imageName
