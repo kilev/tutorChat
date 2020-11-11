@@ -9,6 +9,7 @@ plugins {
 	id 'jp.classmethod.aws.cloudformation' version '0.41'
 }
 
+String imageServiceName = 'tutorchat-backend'
 version = scmVersion.version
 sourceCompatibility = '11'
 
@@ -60,7 +61,7 @@ test {
 }
 
 String dockerHubUsername = 'kilev'
-String imageName = "${dockerHubUsername}/${project.name}:${version}"
+String imageName = "${dockerHubUsername}/${imageServiceName}:${version}"
 
 docker {
 	name imageName
@@ -83,7 +84,7 @@ cloudFormation {
 	stackName "$project.name-stack"
 	stackParams([
 			SubnetID: findProperty('subnetId') ?: '',
-			ServiceName: project.name,
+			ServiceName: imageServiceName,
 			ServiceVersion: version,
 			DockerHubUsername: dockerHubUsername
 	])
