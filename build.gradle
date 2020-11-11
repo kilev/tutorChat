@@ -59,8 +59,8 @@ test {
 	useJUnitPlatform()
 }
 
-String dockerHubUsernameProperty = findProperty('dockerHubUsername') ?: 'kilev'
-String imageName = "${dockerHubUsernameProperty}/tutorchat-backend:$version"
+String dockerHubUsername = 'kilev'
+String imageName = "${dockerHubUsername}/${project.name}:${version}"
 
 docker {
 	name imageName
@@ -75,8 +75,6 @@ dockerRun {
 	clean true
 }
 
-import com.amazonaws.services.cloudformation.model.Capability
-
 aws {
 	region = findProperty('awsRegion') ?: 'us-east-2'
 }
@@ -86,8 +84,8 @@ cloudFormation {
 	stackParams([
 			SubnetID: findProperty('subnetId') ?: '',
 			ServiceName: project.name,
-			ServiceVersion: project.version,
-			DockerHubUsername: dockerHubUsernameProperty
+			ServiceVersion: version,
+			DockerHubUsername: dockerHubUsername
 	])
 	templateFile project.file("ecs.yml")
 }
