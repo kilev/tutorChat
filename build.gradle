@@ -59,7 +59,7 @@ test {
 	useJUnitPlatform()
 }
 
-String dockerHubUsernameProperty = findProperty('dockerHubUsername') ?: 'kil'
+String dockerHubUsernameProperty = findProperty('dockerHubUsername') ?: 'kilev'
 String imageName = "${dockerHubUsernameProperty}/tutorchat-backend:$version"
 
 docker {
