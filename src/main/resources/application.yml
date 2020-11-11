@@ -1,17 +1,30 @@
 #log4JDBC
 spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    username: postgres
+#    password: postgres
+#  flyway:
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    user: postgres
+#    password: postgres
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
-  flyway:
-    url: jdbc:postgresql://localhost:5432/postgres
-    user: postgres
-    password: postgres
+    url: jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1
+#    username: postgres
+#    password: postgres
+    flyway:
+      url: jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1
+#      user: postgres
+#      password: postgres
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: create
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
 security:
   jwt:
     expirationTime: P2D #PT15M

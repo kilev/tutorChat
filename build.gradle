@@ -1,11 +1,16 @@
 plugins {
+	id 'java'
 	id 'org.springframework.boot' version '2.3.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-	id 'java'
+	id 'pl.allegro.tech.build.axion-release' version '1.12.0'
+	id 'com.palantir.docker' version '0.25.0'
+	id 'com.palantir.docker-run' version '0.25.0'
+	id 'com.palantir.docker-compose' version '0.25.0'
+	id 'jp.classmethod.aws.cloudformation' version '0.41'
 }
 
 group = 'com.kil.tutor'
-version = '0.0.1-SNAPSHOT'
+version = 'latest'
 sourceCompatibility = '11'
 
 configurations {
@@ -16,6 +21,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	jcenter()
 }
 
 dependencies {
@@ -27,10 +33,18 @@ dependencies {
 	implementation 'org.flywaydb:flyway-core'
 	implementation "org.mapstruct:mapstruct:1.3.1.Final"
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
+//	runtimeOnly 'org.postgresql:postgresql'
+	compile("com.h2database:h2:1.4.191")
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor "org.mapstruct:mapstruct-processor:1.3.1.Final"
+
+	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+//	compile 'ch.qos.logback:logback-classic:1.2.3'
+//	compile 'ch.qos.logback.contrib:logback-json-core:0.1.5'
+//	compile 'org.slf4j:slf4j-api:1.7.25'
 
 	compile 'io.jsonwebtoken:jjwt-api:0.11.2'
 	runtime 'io.jsonwebtoken:jjwt-impl:0.11.2',
@@ -44,4 +58,19 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+String imageName = "tutorchat-backend:$version"
+
+docker {
+	name imageName
+	files "build/libs/${bootJar.archiveFileName.get()}"
+	buildArgs([JAR_FILE: bootJar.archiveFileName.get()])
+}
+
+dockerRun {
+	name project.name
+	image imageName
+	ports '8080:8080'
+	clean true
 }

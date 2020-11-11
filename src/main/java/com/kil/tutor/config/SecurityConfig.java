@@ -41,22 +41,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        httpSecurity.cors().and().csrf().disable();
+        httpSecurity.headers().frameOptions().disable();
+        httpSecurity.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
-        httpSecurity.cors().and().csrf().disable()
+        httpSecurity
                 .authorizeRequests()
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
-                        "/swagger-resources/**",
+                        "/swagger-resources" + ANY_POSTFIX,
                         "/configuration/security",
                         "/swagger-ui.html",
-                        "/webjars/**").permitAll()
+                        "/webjars" + ANY_POSTFIX)
+                .permitAll()
 
                 .antMatchers(ANY_POSTFIX).permitAll()//TODO remove after cors fix
                 .anyRequest()
                 .authenticated();
-
-
-        httpSecurity.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired
