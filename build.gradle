@@ -78,7 +78,7 @@ dockerRun {
 import com.amazonaws.services.cloudformation.model.Capability
 
 aws {
-	region = findProperty('region') ?: 'us-east-1'
+	region = findProperty('awsRegion') ?: 'us-east-2'
 }
 
 cloudFormation {
