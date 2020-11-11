@@ -17,7 +17,7 @@ pipeline {
         }
         stage('Start Docker container') {
             steps {
-                sh './gradlew -- info docker dockerRun'
+                sh './gradlew --info docker dockerRun'
             }
         }
     }
