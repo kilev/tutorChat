@@ -7,12 +7,12 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh './gradlew assemble'
+                sh './gradlew --info assemble'
             }
         }
         stage('Build Docker image') {
             steps {
-                sh './gradlew docker'
+                sh './gradlew --info docker'
             }
         }
         stage('Push Docker image') {
@@ -21,7 +21,7 @@ pipeline {
             }
             steps {
                 sh 'docker login --username=$DOCKER_HUB_LOGIN_USR --password=$DOCKER_HUB_LOGIN_PSW'
-                sh './gradlew dockerPush'
+                sh './gradlew --info dockerPush'
             }
         }
         stage('Start Docker container') {
