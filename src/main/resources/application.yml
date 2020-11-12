@@ -28,3 +28,5 @@ spring:
 security:
   jwt:
     expirationTime: P2D #PT15M
+server:
+  port: 8081
