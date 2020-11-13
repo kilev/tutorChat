@@ -3,17 +3,17 @@ package com.kil.tutor.entity.user;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import javax.persistence.Transient;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Tutor extends User {
-    public static final UserType type = UserType.TUTOR;
+    public static final UserType TUTOR_TYPE = UserType.TUTOR;
+
+    @Transient
+    private UserType type = TUTOR_TYPE;
 
     private String status;
 

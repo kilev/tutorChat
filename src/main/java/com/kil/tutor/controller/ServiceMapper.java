@@ -7,6 +7,7 @@ import com.kil.tutor.dto.auth.AuthResponse;
 import com.kil.tutor.dto.auth.LoginRequest;
 import com.kil.tutor.dto.auth.RefreshRequest;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -21,6 +22,7 @@ public abstract class ServiceMapper {
 
     public abstract UserAuthRefreshRequest convert(RefreshRequest request);
 
+    @Mapping(target = "dateTime", ignore = true)
     public abstract AuthResponse convert(UserAuth userAuth);
 
     protected List<String> convert(Collection<? extends GrantedAuthority> authorities){

@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -19,11 +18,9 @@ import java.util.List;
 @Table(name = "app_user")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(unique = true)
+    @Id
+//    @Column(unique = true)
     @NotBlank
     private String username;
 
@@ -35,9 +32,6 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private List<Role> roles;
 
-//    @NotNull
-//    private UserType type;
-
     @NotBlank
     private String lastName;
 
@@ -48,7 +42,6 @@ public class User implements UserDetails {
 
     private String avatarUrl;
 
-    @NotNull
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime lastOnlineDate;
 
