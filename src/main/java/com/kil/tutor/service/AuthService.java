@@ -2,9 +2,7 @@ package com.kil.tutor.service;
 
 import com.google.common.collect.Lists;
 import com.kil.tutor.domain.auth.UserAuth;
-import com.kil.tutor.domain.auth.UserAuthRefreshRequest;
 import com.kil.tutor.domain.auth.UserAuthRequest;
-import com.kil.tutor.entity.RefreshToken;
 import com.kil.tutor.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,20 +53,20 @@ public class AuthService {
                 .build();
     }
 
-    public UserAuth refreshAuth(UserAuthRefreshRequest request) {
-        RefreshToken oldRefreshToken = refreshTokenService.getRefreshToken(request.getRefreshToken());
-        refreshTokenService.delete(oldRefreshToken);
-
-        RefreshToken newRefreshToken = refreshTokenService.generate(oldRefreshToken.getUsername());
-
-        Instant jwtExpirationTime = getJwtExpireTime();
-        String token = jwtProvider.generateTokenWithUserName(oldRefreshToken.getUsername(), jwtExpirationTime);
-        return UserAuth.builder()
-                .authenticationToken(token)
-                .refreshToken(newRefreshToken.getToken())
-                .expiresAt(jwtExpirationTime)
-                .build();
-    }
+//    public UserAuth refreshAuth(UserAuthRefreshRequest request) {
+//        RefreshToken oldRefreshToken = refreshTokenService.getRefreshToken(request.getRefreshToken());
+//        refreshTokenService.delete(oldRefreshToken);
+//
+//        RefreshToken newRefreshToken = refreshTokenService.generate(oldRefreshToken.getUsername());
+//
+//        Instant jwtExpirationTime = getJwtExpireTime();
+//        String token = jwtProvider.generateTokenWithUserName(oldRefreshToken.getUsername(), jwtExpirationTime);
+//        return UserAuth.builder()
+//                .authenticationToken(token)
+//                .refreshToken(newRefreshToken.getToken())
+//                .expiresAt(jwtExpirationTime)
+//                .build();
+//    }
 
     private Instant getJwtExpireTime() {
         return Instant.now().plus(jwtExpirationDuration);
