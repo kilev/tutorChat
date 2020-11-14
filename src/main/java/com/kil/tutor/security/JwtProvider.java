@@ -40,7 +40,7 @@ public class JwtProvider {
     public String generateTokenWithUserName(User user, Instant jwtExpirationTime){
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .setClaims(Jwts.claims().setId(user.getId().toString()))
+                .setId(user.getId().toString())
                 .setIssuedAt(Date.from(Instant.now()))
                 .signWith(getPrivateKey())
                 .setExpiration(Date.from(jwtExpirationTime))
