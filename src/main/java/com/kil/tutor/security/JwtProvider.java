@@ -1,10 +1,10 @@
 package com.kil.tutor.security;
 
 import com.kil.tutor.TutorChatException;
+import com.kil.tutor.entity.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -33,13 +33,14 @@ public class JwtProvider {
     }
 
     public String generateToken(Authentication authentication, Instant jwtExpirationTime) {
-        UserDetails principal = (UserDetails) authentication.getPrincipal();
-        return generateTokenWithUserName(principal.getUsername(), jwtExpirationTime);
+        User user = (User) authentication.getPrincipal();
+        return generateTokenWithUserName(user, jwtExpirationTime);
     }
 
-    public String generateTokenWithUserName(String username, Instant jwtExpirationTime){
+    public String generateTokenWithUserName(User user, Instant jwtExpirationTime){
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(user.getUsername())
+                .setClaims(Jwts.claims().setId(user.getId().toString()))
                 .setIssuedAt(Date.from(Instant.now()))
                 .signWith(getPrivateKey())
                 .setExpiration(Date.from(jwtExpirationTime))

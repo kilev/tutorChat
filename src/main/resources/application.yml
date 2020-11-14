@@ -30,4 +30,4 @@ security:
   jwt:
     expirationTime: P2D #PT15M
 server:
-  port: 80
+  port: 8080

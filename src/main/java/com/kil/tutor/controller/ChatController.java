@@ -1,5 +1,6 @@
 package com.kil.tutor.controller;
 
+import com.kil.tutor.dto.chat.ChatInfo;
 import com.kil.tutor.dto.chat.GetChatResponse;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.user.User;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping(ApiConsts.CHAT)
 @RestController
@@ -41,19 +43,10 @@ public class ChatController {
 
     @GetMapping(ApiConsts.ALL)
     public GetChatResponse getChats(@ApiIgnore @AuthenticationPrincipal User user) {
-//        List<Chat> chats = chatService.getChats(user.getId());
-
-//        return chats;
-//        List<Chat> chats = user.getChats();
-//        List<ChatInfo> chatInfos = chats.stream()
-//                .map(chat -> mapper.map(chat, 0L, null))
-//                .collect(Collectors.toList());
-//        return GetChatResponse.builder().chats(chatInfos).build();
-
         List<Chat> chats = chatService.getChats(user.getId());
-        return null;
+        List<ChatInfo> chatInfos = chats.stream()
+                .map(chat -> mapper.map(chat, 0L, null))
+                .collect(Collectors.toList());
+        return GetChatResponse.builder().chats(chatInfos).build();
     }
-
-//    public GetChatParticipants
-
 }
