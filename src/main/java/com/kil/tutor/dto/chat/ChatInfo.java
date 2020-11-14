@@ -1,18 +1,23 @@
 package com.kil.tutor.dto.chat;
 
-import com.kil.tutor.domain.ChatType;
-import com.kil.tutor.entity.user.User;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.kil.tutor.dto.chat.message.MessageInfo;
 import lombok.Data;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = DirectInfo.class, name = "DIRECT"),
+        @JsonSubTypes.Type(value = GroupInfo.class, name = "GROUP")
+})
 @Data
 public class ChatInfo {
-    private String name;
-    private ChatType type;
-    private List<User> Participants;
+    private Long id;
+    private Long unreadMessageCount;
+    private MessageInfo lastMessage;
+    private List<Long> participants;
 }

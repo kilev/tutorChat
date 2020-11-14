@@ -1,4 +1,4 @@
-package com.kil.tutor.entity.chat;
+package com.kil.tutor.entity.chat.message;
 
 import com.kil.tutor.entity.user.User;
 import lombok.Data;

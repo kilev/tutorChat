@@ -1,6 +1,7 @@
 package com.kil.tutor.entity.user;
 
 import com.kil.tutor.domain.Role;
+import com.kil.tutor.entity.chat.Chat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -20,7 +22,10 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-//    @Column(unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
     @NotBlank
     private String username;
 
@@ -31,6 +36,9 @@ public class User implements UserDetails {
     @CollectionTable(name = "app_user_role", joinColumns = @JoinColumn(name = "app_user_id"))
     @Enumerated(value = EnumType.STRING)
     private List<Role> roles;
+
+    @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
+    private List<Chat> chats;
 
     @NotBlank
     private String lastName;

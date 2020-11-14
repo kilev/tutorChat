@@ -1,9 +1,10 @@
-package com.kil.tutor.entity.chat;
+package com.kil.tutor.dto.chat;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SimpleMessage extends ChatMessage {
+public class GroupInfo extends ChatInfo{
+    private String name;
 }

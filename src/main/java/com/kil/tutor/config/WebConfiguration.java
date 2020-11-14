@@ -11,10 +11,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.TimeZone;
 
 @Configuration
 @EnableWebMvc
@@ -47,13 +44,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Bean
     public ObjectMapper jsonMapper() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
         return new ObjectMapper()
-//                .registerModule(new JavaTimeModule())
                 .findAndRegisterModules()
-                .setDateFormat(dateFormat)
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 }

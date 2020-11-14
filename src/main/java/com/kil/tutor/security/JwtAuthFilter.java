@@ -1,5 +1,8 @@
 package com.kil.tutor.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +22,8 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+    private static final Logger LOG = LoggerFactory.getLogger(JwtAuthFilter.class);
+
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -43,16 +48,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String jwt = getJwt(request);
 
         if (StringUtils.hasText(jwt)) {
-            jwtProvider.validateJwt(jwt);
+            try {
+                jwtProvider.validateJwt(jwt);
+                String username = jwtProvider.getUserName(jwt);
 
-            String username = jwtProvider.getUserName(jwt);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
+                        null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
-                    null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (ExpiredJwtException e) {
+                LOG.warn("Token was expired: {}", jwt);
+            }
         }
         filterChain.doFilter(request, response);
     }

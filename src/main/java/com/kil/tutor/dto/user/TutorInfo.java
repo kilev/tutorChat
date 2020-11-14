@@ -1,13 +1,10 @@
-package com.kil.tutor.entity.user;
+package com.kil.tutor.dto.user;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Entity;
-
-@Data
 @EqualsAndHashCode(callSuper = true)
-@Entity
-public class Tutor extends User {
+@Data
+public class TutorInfo extends UserInfo {
     private String status;
 }

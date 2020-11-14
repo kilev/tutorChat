@@ -1,7 +1,10 @@
 package com.kil.tutor.controller;
 
 import com.kil.tutor.domain.auth.UserAuth;
-import com.kil.tutor.dto.auth.*;
+import com.kil.tutor.dto.auth.AuthResponse;
+import com.kil.tutor.dto.auth.LoginRequest;
+import com.kil.tutor.dto.auth.LogoutRequest;
+import com.kil.tutor.dto.auth.RefreshRequest;
 import com.kil.tutor.service.AuthService;
 import com.kil.tutor.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,18 +37,18 @@ public class AuthController {
 
     @PostMapping(ApiConsts.LOGIN)
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        UserAuth auth = authService.auth(mapper.convert(request));
-        return mapper.convert(auth);
+        UserAuth auth = authService.auth(mapper.map(request));
+        return mapper.map(auth);
     }
 
-    @PostMapping(ApiConsts.REFRESH)
-    public AuthResponse refresh(@Valid @RequestBody RefreshRequest request) {
-        UserAuth auth = authService.refreshAuth(mapper.convert(request));
-        return mapper.convert(auth);
+//    @PostMapping(ApiConsts.REFRESH)
+    private AuthResponse refresh(@Valid @RequestBody RefreshRequest request) {
+        UserAuth auth = authService.refreshAuth(mapper.map(request));
+        return mapper.map(auth);
     }
 
-    @PostMapping(ApiConsts.LOGOUT)
-    public ResponseEntity<String> logout(@Valid @RequestBody LogoutRequest request) {
+//    @PostMapping(ApiConsts.LOGOUT)
+    private ResponseEntity<String> logout(@Valid @RequestBody LogoutRequest request) {
         refreshTokenService.deleteByTokenValue(request.getRefreshToken());
         return ResponseEntity.status(HttpStatus.OK).body("Logout successfully.");
     }

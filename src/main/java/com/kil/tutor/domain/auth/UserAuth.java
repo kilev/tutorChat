@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.Instant;
-import java.util.Collection;
+import java.util.List;
 
 @Data
 @Builder
@@ -13,5 +13,5 @@ public class UserAuth {
     private String authenticationToken;
     private Instant expiresAt;
     private String refreshToken;
-    private Collection<? extends GrantedAuthority> roles;
+    private List<GrantedAuthority> authorities;
 }

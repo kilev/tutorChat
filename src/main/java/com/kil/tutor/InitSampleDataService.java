@@ -1,30 +1,40 @@
 package com.kil.tutor;
 
 import com.kil.tutor.domain.Role;
+import com.kil.tutor.entity.chat.Direct;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
+import com.kil.tutor.repository.ChatRepository;
 import com.kil.tutor.repository.StudentRepository;
 import com.kil.tutor.repository.TutorRepository;
+import com.kil.tutor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 
 @Service
 public class InitSampleDataService {
+    public final ChatRepository chatRepository;
+    private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final TutorRepository tutorRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public InitSampleDataService(
+            ChatRepository chatRepository,
+            UserRepository userRepository,
             StudentRepository studentRepository,
             TutorRepository tutorRepository,
             PasswordEncoder passwordEncoder
     ) {
+        this.chatRepository = chatRepository;
+        this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.tutorRepository = tutorRepository;
         this.passwordEncoder = passwordEncoder;
@@ -40,7 +50,8 @@ public class InitSampleDataService {
         tutor.setLastName("tutorLastName");
         tutor.setLastOnlineDate(LocalDateTime.now());
         tutor.setRoles(Collections.singletonList(Role.USER));
-        tutorRepository.save(tutor);
+        tutor.setStatus("Баллов будет мало...");
+        userRepository.save(tutor);
 
         Student student = new Student();
         student.setUsername("student");
@@ -51,6 +62,10 @@ public class InitSampleDataService {
         student.setGroupName("AVT-713");
         student.setLastOnlineDate(LocalDateTime.now());
         student.setRoles(Collections.singletonList(Role.USER));
-        studentRepository.save(student);
+        userRepository.save(student);
+
+        Direct direct = new Direct();
+        direct.setParticipants(Arrays.asList(tutor, student));
+        chatRepository.save(direct);
     }
 }

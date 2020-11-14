@@ -1,4 +1,4 @@
-package com.kil.tutor.entity.chat;
+package com.kil.tutor.entity.chat.message;
 
 import com.kil.tutor.entity.user.User;
 import lombok.Data;
@@ -15,9 +15,9 @@ public class VoteOption {
     private Long id;
 
     @NotBlank
-    String optionText;
+    private String optionText;
 
     @ManyToMany
-    List<User> votedUsers;
+    private List<User> votedUsers;
 
 }
