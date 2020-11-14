@@ -1,7 +1,7 @@
 package com.kil.tutor;
 
 import com.kil.tutor.domain.Role;
-import com.kil.tutor.entity.chat.Direct;
+import com.kil.tutor.entity.chat.DirectChat;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
 import com.kil.tutor.repository.ChatRepository;
@@ -64,7 +64,7 @@ public class InitSampleDataService {
         student.setRoles(Collections.singletonList(Role.USER));
         userRepository.save(student);
 
-        Direct direct = new Direct();
+        DirectChat direct = new DirectChat();
         direct.setParticipants(Arrays.asList(tutor, student));
         chatRepository.save(direct);
     }

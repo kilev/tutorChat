@@ -19,11 +19,6 @@ public class Chat {
 //    @OneToMany
 //    private List<ChatMessage> messages;
 
-    @JoinTable(
-            name = "Chat_participants",
-            joinColumns = { @JoinColumn(name = "participantsS_id") },
-            inverseJoinColumns = { @JoinColumn(name = "chatT_id") }
-    )
     @ManyToMany
     private List<User> participants;
 

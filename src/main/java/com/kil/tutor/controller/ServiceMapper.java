@@ -14,8 +14,8 @@ import com.kil.tutor.dto.user.StudentInfo;
 import com.kil.tutor.dto.user.TutorInfo;
 import com.kil.tutor.dto.user.UserInfo;
 import com.kil.tutor.entity.chat.Chat;
-import com.kil.tutor.entity.chat.Direct;
-import com.kil.tutor.entity.chat.Group;
+import com.kil.tutor.entity.chat.DirectChat;
+import com.kil.tutor.entity.chat.GroupChat;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
 import com.kil.tutor.entity.user.User;
@@ -57,18 +57,18 @@ public abstract class ServiceMapper {
 //    public abstract List<ChatInfo> mapChats(List<Chat> chats);
 
     public ChatInfo map(Chat chat, Long unreadMessageCount, MessageInfo lastMessage) {
-        if (chat instanceof Direct) {
-            return this.map((Direct) chat, unreadMessageCount, lastMessage);
-        } else if (chat instanceof Group) {
-            return this.map((Group) chat, unreadMessageCount, lastMessage);
+        if (chat instanceof DirectChat) {
+            return this.map((DirectChat) chat, unreadMessageCount, lastMessage);
+        } else if (chat instanceof GroupChat) {
+            return this.map((GroupChat) chat, unreadMessageCount, lastMessage);
         } else throw new UnsupportedOperationException();
     }
 
     @Mapping(target = "id", source = "direct.id")
-    protected abstract DirectInfo map(Direct direct, Long unreadMessageCount, MessageInfo lastMessage);
+    protected abstract DirectInfo map(DirectChat direct, Long unreadMessageCount, MessageInfo lastMessage);
 
     @Mapping(target = "id", source = "group.id")
-    protected abstract GroupInfo map(Group group, Long unreadMessageCount, MessageInfo lastMessage);
+    protected abstract GroupInfo map(GroupChat group, Long unreadMessageCount, MessageInfo lastMessage);
 
     protected Long mapToUserId(User user) {
         return user.getId();

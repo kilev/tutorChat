@@ -41,19 +41,4 @@ public class ChatService {
         return chats;
     }
 
-//    public List<Chat> getChats(Long userId) {
-//        Session session = entityManager.unwrap(Session.class);
-//        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-//        CriteriaQuery<Chat> criteriaQuery = criteriaBuilder.createQuery(Chat.class);
-//        Root<Chat> root = criteriaQuery.from(Chat.class);
-//        criteriaQuery
-//                .select(root)
-//                .where(criteriaBuilder.like(root.get("")));
-//
-//        Query<Chat> query = session.createQuery(criteriaQuery);
-//        List<Chat> results = query.getResultList();
-//        return results;
-//        return null;
-//    }
-
 }

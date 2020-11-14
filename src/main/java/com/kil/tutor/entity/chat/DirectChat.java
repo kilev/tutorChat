@@ -8,5 +8,5 @@ import javax.persistence.Entity;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class Direct extends Chat {
+public class DirectChat extends Chat {
 }

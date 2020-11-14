@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class Group extends Chat{
+public class GroupChat extends Chat{
 
     @NotEmpty
     private String name;
