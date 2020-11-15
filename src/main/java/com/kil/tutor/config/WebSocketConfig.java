@@ -1,6 +1,7 @@
 package com.kil.tutor.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
@@ -17,10 +18,9 @@ import java.util.List;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    public static final String WEB_SOCKET_ROUTE_PREFIX = "/ws";
-
     private final ObjectMapper objectMapper;
 
+    @Autowired
     public WebSocketConfig(
             @Qualifier("webApiMapper") ObjectMapper objectMapper
     ) {
@@ -29,18 +29,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
+        config.enableSimpleBroker("/");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint(WEB_SOCKET_ROUTE_PREFIX + "/chat")
+        registry.addEndpoint("/tutorChatSocketEndpoint")
                 .setAllowedOrigins("*")
                 .withSockJS();
-        registry.addEndpoint(WEB_SOCKET_ROUTE_PREFIX + "/chat")
-                .setAllowedOrigins("*");
     }
 
     @Override
