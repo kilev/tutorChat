@@ -1,5 +1,6 @@
 package com.kil.tutor.entity.chat;
 
+import com.kil.tutor.entity.chat.message.ChatMessage;
 import com.kil.tutor.entity.user.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,8 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToMany
-//    private List<ChatMessage> messages;
+    @OneToMany
+    private List<ChatMessage> messages;
 
     @ManyToMany
     private List<User> participants;

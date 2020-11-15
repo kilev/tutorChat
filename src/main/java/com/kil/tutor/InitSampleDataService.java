@@ -2,6 +2,7 @@ package com.kil.tutor;
 
 import com.kil.tutor.domain.Role;
 import com.kil.tutor.entity.chat.DirectChat;
+import com.kil.tutor.entity.chat.GroupChat;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
 import com.kil.tutor.repository.ChatRepository;
@@ -67,5 +68,10 @@ public class InitSampleDataService {
         DirectChat direct = new DirectChat();
         direct.setParticipants(Arrays.asList(tutor, student));
         chatRepository.save(direct);
+
+        GroupChat group = new GroupChat();
+        group.setParticipants(Arrays.asList(tutor, student));
+        group.setName("AVT-713");
+        chatRepository.save(group);
     }
 }

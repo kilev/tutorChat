@@ -2,6 +2,7 @@ package com.kil.tutor.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -35,6 +36,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+        ;
     }
 
     @Override
@@ -42,6 +47,7 @@ public class WebConfiguration implements WebMvcConfigurer {
         converters.add(new MappingJackson2HttpMessageConverter(jsonMapper()));
     }
 
+    @Qualifier("webApiMapper")
     @Bean
     public ObjectMapper jsonMapper() {
         return new ObjectMapper()

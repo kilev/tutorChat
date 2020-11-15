@@ -26,9 +26,9 @@ public class SwaggerConfiguration {
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-                .title("Reddit Clone API")
+                .title("Tutor Chat API")
                 .version("1.0")
-                .description("API for Reddit Clone Application")
+                .description("API for Tutor chat Application")
                 .contact(new Contact("Kil Alexander", "https://vk.com/kilev", "xyz@email.com"))
                 .license("Apache License Version 2.0")
                 .build();

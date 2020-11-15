@@ -1,8 +1,7 @@
 package com.kil.tutor.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,10 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private static final Logger LOG = LoggerFactory.getLogger(JwtAuthFilter.class);
-
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -59,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (ExpiredJwtException e) {
-                LOG.warn("Token was expired: {}", jwt);
+                log.warn("Token was expired: {}", jwt);
             }
         }
         filterChain.doFilter(request, response);

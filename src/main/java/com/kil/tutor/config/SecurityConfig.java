@@ -47,13 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         httpSecurity
                 .authorizeRequests()
-                .antMatchers("/v2/api-docs",
-                        "/configuration/ui",
-                        "/swagger-resources" + ANY_POSTFIX,
-                        "/configuration/security",
-                        "/swagger-ui.html",
-                        "/webjars" + ANY_POSTFIX)
-                .permitAll()
+//                .antMatchers("/v2/api-docs",
+//                        "/configuration/ui",
+//                        "/swagger-resources" + ANY_POSTFIX,
+//                        "/configuration/security",
+//                        "/swagger-ui.html",
+//                        "/static/web-socket.html",
+//                        "/webjars" + ANY_POSTFIX)
+//                .permitAll()
 
                 .antMatchers(ANY_POSTFIX).permitAll()//TODO remove after cors fix
                 .anyRequest()

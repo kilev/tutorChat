@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,4 +25,11 @@ public class ChatMessage {
     @NotNull
     @ManyToOne
     private User author;
+
+    @ManyToMany
+    private List<User> readUsers;
+
+    @NotNull
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime dateTime;
 }

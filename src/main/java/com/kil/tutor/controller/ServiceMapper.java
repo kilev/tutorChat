@@ -54,8 +54,6 @@ public abstract class ServiceMapper {
 
     protected abstract StudentInfo map(Student student);
 
-//    public abstract List<ChatInfo> mapChats(List<Chat> chats);
-
     public ChatInfo map(Chat chat, Long unreadMessageCount, MessageInfo lastMessage) {
         if (chat instanceof DirectChat) {
             return this.map((DirectChat) chat, unreadMessageCount, lastMessage);

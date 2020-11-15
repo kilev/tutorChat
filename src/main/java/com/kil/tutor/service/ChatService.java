@@ -33,12 +33,10 @@ public class ChatService {
     @Transactional(readOnly = true)
     public List<Chat> getChats(Long userId) {
         Optional<User> user = userRepository.findById(userId);
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             return Collections.emptyList();
         }
-
-        List<Chat> chats = user.get().getChats();
-        return chats;
+        return user.get().getChats();
     }
 
 }
