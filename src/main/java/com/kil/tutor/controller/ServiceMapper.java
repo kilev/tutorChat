@@ -87,7 +87,9 @@ public abstract class ServiceMapper {
         } else throw new UnsupportedOperationException();
     }
 
-    @Mapping(target = "authorId", source = "author.id")
+
+    @Mapping(target = "text", source = "messageText")
+    @Mapping(target = "userId", source = "author.id")
     protected abstract SimpleMessageInfo map(SimpleMessage message);
 
 //    @Mapping(target = "authorId", source = "author.id")

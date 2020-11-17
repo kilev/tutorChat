@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Data
 public class MessageInfo {
     private Long id;
-    private String messageText;
-    private Long authorId;
+    private String text;
+    private Long userId;
     private LocalDateTime dateTime;
 }
