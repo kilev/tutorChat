@@ -3,26 +3,32 @@ package com.kil.tutor.controller;
 import com.kil.tutor.dto.chat.ChatInfo;
 import com.kil.tutor.dto.chat.GetChatResponse;
 import com.kil.tutor.dto.chat.WebSocketMessage;
+import com.kil.tutor.dto.chat.message.GetChatMessagesResponse;
 import com.kil.tutor.entity.chat.Chat;
+import com.kil.tutor.entity.chat.message.ChatMessage;
 import com.kil.tutor.entity.user.User;
 import com.kil.tutor.service.ChatService;
 import com.kil.tutor.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
-import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,12 +54,6 @@ public class ChatController {
         this.mapper = mapper;
     }
 
-    @GetMapping("test")
-    public ResponseEntity<String> test(@AuthenticationPrincipal User user) {
-        String username = user == null ? "" : user.getUsername();
-        return ResponseEntity.ok().body("test passed successful!" + username);
-    }
-
     @GetMapping(ApiConsts.ALL)
     public GetChatResponse getChats(@ApiIgnore @AuthenticationPrincipal User user) {
         List<Chat> chats = chatService.getChats(user.getId());
@@ -63,22 +63,54 @@ public class ChatController {
         return GetChatResponse.builder().chats(chatInfos).build();
     }
 
-    @MessageMapping("/chat/message")
-    @SendTo("/chat/messages")
-    public WebSocketMessage register(@Payload WebSocketMessage message, SimpMessageHeaderAccessor headerAccessor) {
-        return message;
+    @GetMapping("/{id}" + ApiConsts.MESSAGES)
+    public GetChatMessagesResponse getMessages(@PathVariable Long id) {
+        List<ChatMessage> messages = chatService.getMessages(id);
+
+        GetChatMessagesResponse response = new GetChatMessagesResponse();
+        response.setMessages(mapper.map(messages));
+        return response;
     }
 
-    @EventListener
-    public void handleWebSocketConnectedEvent(SessionConnectEvent event) {
-        String userUnfo = event.getUser() == null ? "" : "user = " +  event.getUser();
-        log.info(userUnfo + "was connected!");
+    @MessageMapping("/chat")
+    public void message(@Payload WebSocketMessage message) {
+        chatService.saveMessage(message.getUserId(), message.getChatId(), message.getText());
+
+        List<User> chatParticipants = chatService.getChatParticipants(message.getChatId());
+        chatParticipants.forEach(user -> messagingTemplate
+                .convertAndSendToUser(user.getId().toString(), "/messages", message));
+
+    }
+
+    @MessageExceptionHandler
+    @SendToUser("/chat/error")
+    public String handleException(Throwable exception) {
+        log.error("WebSockerException: {}", Arrays.toString(exception.getStackTrace()));
+        return exception.getMessage();
+    }
+
+//    @EventListener
+//    public void handleWebSocketDisconnectedEvent(SessionDisconnectEvent event) {
+//        String userUnfo = event.getUser() == null ? "" : "user = " + event.getUser();
+//        log.info(userUnfo + "was disconnected, last online time: " + LocalDateTime.now());
+////        StompCommand
+//    }
+
+    public class FilterChannelInterceptor implements ChannelInterceptor {
+        @Override
+        public Message<?> preSend(Message<?> message, MessageChannel channel) {
+            StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+            if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand())) {
+                // Your logic
+            }
+            return message;
+        }
     }
 
 //    @MessageMapping("/chat/{chatId}")
 //    public void sendMessage(@DestinationVariable String chatId, WebSocketMessage message) {
-//        System.out.println("handling send message: " + message + " to: " + to);
-//        boolean isExists = UserStorage.getInstance().getUsers().contains(to);
+//        System.out.println("handling send message: " + message + " to: " + chatId);
+//        boolean isExists = UserStorage.getInstance().getUsers().contains(chatId);
 //        if (isExists) {
 //            messagingTemplate.convertAndSend("/topic/messages/" + chatId, message);
 //        }

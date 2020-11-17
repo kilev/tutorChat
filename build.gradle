@@ -12,6 +12,7 @@ plugins {
 String imageServiceName = 'tutorchat-backend'
 version = scmVersion.version
 sourceCompatibility = '11'
+targetCompatibility = '11'
 
 configurations {
 	compileOnly {
@@ -31,6 +32,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	compile group: 'org.springframework', name: 'spring-messaging', version: '5.2.10.RELEASE'
+	compile group: 'org.springframework.security', name: 'spring-security-messaging', version: '5.3.5.RELEASE'
+
 //	implementation 'org.flywaydb:flyway-core'
 	implementation "org.mapstruct:mapstruct:1.3.1.Final"
 	compileOnly 'org.projectlombok:lombok'
@@ -39,10 +44,7 @@ dependencies {
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor "org.mapstruct:mapstruct-processor:1.3.1.Final"
-
-
 	compile group: 'com.google.guava', name: 'guava', version: '30.0-jre'
-
 
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
@@ -51,8 +53,6 @@ dependencies {
 	compile 'ch.qos.logback.contrib:logback-json-core:0.1.5'
 	compile 'org.slf4j:slf4j-api:1.7.25'
 	implementation 'com.github.candrews:log4jdbc-spring-boot-starter:2.0.0'
-
-//	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.4.23.Final'
 
 	compile 'io.jsonwebtoken:jjwt-api:0.11.2'
 	runtime 'io.jsonwebtoken:jjwt-impl:0.11.2',

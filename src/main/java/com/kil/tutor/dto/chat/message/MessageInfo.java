@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         property = "type")
@@ -16,4 +18,5 @@ public class MessageInfo {
     private Long id;
     private String messageText;
     private Long authorId;
+    private LocalDateTime dateTime;
 }

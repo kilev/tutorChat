@@ -1,0 +1,5 @@
+stompClient.send("/app/chat", {}, JSON.stringify({'userId':userId, 'chatId': chatId, 'text':text}));
+
+stompClient.subscribe('/user/' + userId + '/messages', function(messageOutput) {
+showMessageOutput(JSON.parse(messageOutput.body));
+});

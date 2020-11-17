@@ -20,7 +20,8 @@
             stompClient.connect({}, function(frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/chat/messages', function(messageOutput) {
+                var userId = document.getElementById('subscribeUserId').value;
+                stompClient.subscribe('/user/' + userId + '/messages', function(messageOutput) {
                     showMessageOutput(JSON.parse(messageOutput.body));
                 });
             });
@@ -35,10 +36,10 @@
         }
 
         function sendMessage() {
-            var from = document.getElementById('from').value;
+            var userId = document.getElementById('userId').value;
+            var chatId = document.getElementById('chatId').value;
             var text = document.getElementById('text').value;
-            stompClient.send("/app/chat/message", {},
-                JSON.stringify({'from':from, 'text':text}));
+            stompClient.send("/app/chat", {}, JSON.stringify({'userId':userId, 'chatId': chatId, 'text':text}));
         }
 
         function showMessageOutput(messageOutput) {
@@ -59,6 +60,7 @@
     <br />
     <div>
         <button id="connect" onclick="connect();">Connect</button>
+        <input type="text" id="subscribeUserId" placeholder="Write your subscribe userId..."/>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">
             Disconnect
         </button>
@@ -66,6 +68,8 @@
     <br />
     <div id="conversationDiv">
         <input type="text" id="text" placeholder="Write a message..."/>
+        <input type="text" id="userId" placeholder="Write your userId..."/>
+        <input type="text" id="chatId" placeholder="Write your chatId..."/>
         <button id="sendMessage" onclick="sendMessage();">Send</button>
         <p id="response"></p>
     </div>

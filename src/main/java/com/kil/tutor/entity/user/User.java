@@ -32,7 +32,7 @@ public class User implements UserDetails {
     @NotBlank
     private String password;
 
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "app_user_role", joinColumns = @JoinColumn(name = "app_user_id"))
     @Enumerated(value = EnumType.STRING)
     private List<Role> roles;

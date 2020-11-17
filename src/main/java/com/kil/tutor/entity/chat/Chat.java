@@ -17,10 +17,10 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @OneToMany(mappedBy = "chat")
     private List<ChatMessage> messages;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<User> participants;
 
 }

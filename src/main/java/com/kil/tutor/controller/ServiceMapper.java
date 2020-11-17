@@ -10,12 +10,17 @@ import com.kil.tutor.dto.chat.ChatInfo;
 import com.kil.tutor.dto.chat.DirectInfo;
 import com.kil.tutor.dto.chat.GroupInfo;
 import com.kil.tutor.dto.chat.message.MessageInfo;
+import com.kil.tutor.dto.chat.message.SimpleMessageInfo;
+import com.kil.tutor.dto.chat.message.VoteInfo;
 import com.kil.tutor.dto.user.StudentInfo;
 import com.kil.tutor.dto.user.TutorInfo;
 import com.kil.tutor.dto.user.UserInfo;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.DirectChat;
 import com.kil.tutor.entity.chat.GroupChat;
+import com.kil.tutor.entity.chat.message.ChatMessage;
+import com.kil.tutor.entity.chat.message.SimpleMessage;
+import com.kil.tutor.entity.chat.message.Vote;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
 import com.kil.tutor.entity.user.User;
@@ -70,5 +75,23 @@ public abstract class ServiceMapper {
 
     protected Long mapToUserId(User user) {
         return user.getId();
+    }
+
+    public abstract List<MessageInfo> map(List<ChatMessage> messages);
+
+    protected MessageInfo map(ChatMessage message) {
+        if (message instanceof SimpleMessage) {
+            return this.map((SimpleMessage) message);
+        } else if (message instanceof Vote) {
+            return this.map((Vote) message);
+        } else throw new UnsupportedOperationException();
+    }
+
+    @Mapping(target = "authorId", source = "author.id")
+    protected abstract SimpleMessageInfo map(SimpleMessage message);
+
+//    @Mapping(target = "authorId", source = "author.id")
+    protected VoteInfo map(Vote message){
+        return null;//TODO
     }
 }
