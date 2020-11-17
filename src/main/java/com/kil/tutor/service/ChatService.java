@@ -74,13 +74,13 @@ public class ChatService {
     }
 
     @Transactional
-    public void saveMessage(Long userId, Long chatId, String text) {
+    public ChatMessage saveMessage(Long userId, Long chatId, String text) {
         SimpleMessage message = new SimpleMessage();
         message.setMessageText(text);
         message.setDateTime(LocalDateTime.now());
         message.setAuthor(userRepository.getOne(userId));
         message.setChat(chatRepository.getOne(chatId));
-        messageRepository.save(message);
+        return messageRepository.save(message);
     }
 
 }

@@ -74,7 +74,9 @@ public class ChatController {
 
     @MessageMapping("/chat")
     public void message(@Payload WebSocketMessage message) {
-        chatService.saveMessage(message.getUserId(), message.getChatId(), message.getText());
+        ChatMessage savedMessage = chatService.saveMessage(message.getUserId(), message.getChatId(), message.getText());
+        message.setDateTime(savedMessage.getDateTime());
+        message.setMessageId(savedMessage.getId());
 
         List<User> chatParticipants = chatService.getChatParticipants(message.getChatId());
         chatParticipants.forEach(user -> messagingTemplate
