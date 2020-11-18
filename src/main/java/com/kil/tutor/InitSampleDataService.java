@@ -46,20 +46,20 @@ public class InitSampleDataService {
         Tutor tutor = new Tutor();
         tutor.setUsername("tutor");
         tutor.setPassword(passwordEncoder.encode("tutor"));
-        tutor.setFirstName("tutorFirstName");
-        tutor.setMiddleName("tutorMiddleName");
-        tutor.setLastName("tutorLastName");
+        tutor.setFirstName("Иванова");
+        tutor.setMiddleName("Томара");
+        tutor.setLastName("Ивановна");
         tutor.setLastOnlineDate(LocalDateTime.now());
         tutor.setRoles(Collections.singletonList(Role.USER));
-        tutor.setStatus("Баллов будет мало...");
+        tutor.setStatus("Готова принимать долги!");
         userRepository.save(tutor);
 
         Student student = new Student();
         student.setUsername("student");
         student.setPassword(passwordEncoder.encode("student"));
-        student.setFirstName("studentFirstName");
-        student.setMiddleName("studentMiddleName");
-        student.setLastName("studentLastName");
+        student.setFirstName("Иванов");
+        student.setMiddleName("Иван");
+        student.setLastName("Иванович");
         student.setGroupName("AVT-713");
         student.setLastOnlineDate(LocalDateTime.now());
         student.setRoles(Collections.singletonList(Role.USER));
