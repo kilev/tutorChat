@@ -46,9 +46,9 @@ public class InitSampleDataService {
         Tutor tutor = new Tutor();
         tutor.setUsername("tutor");
         tutor.setPassword(passwordEncoder.encode("tutor"));
-        tutor.setFirstName("Иванова");
-        tutor.setMiddleName("Томара");
-        tutor.setLastName("Ивановна");
+        tutor.setFirstName("Томара");
+        tutor.setMiddleName("Ивановна");
+        tutor.setLastName("Иванова");
         tutor.setLastOnlineDate(LocalDateTime.now());
         tutor.setRoles(Collections.singletonList(Role.USER));
         tutor.setStatus("Готова принимать долги!");
@@ -57,9 +57,9 @@ public class InitSampleDataService {
         Student student = new Student();
         student.setUsername("student");
         student.setPassword(passwordEncoder.encode("student"));
-        student.setFirstName("Иванов");
-        student.setMiddleName("Иван");
-        student.setLastName("Иванович");
+        student.setFirstName("Иван");
+        student.setMiddleName("Иванович");
+        student.setLastName("Иванов");
         student.setGroupName("AVT-713");
         student.setLastOnlineDate(LocalDateTime.now());
         student.setRoles(Collections.singletonList(Role.USER));
