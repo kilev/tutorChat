@@ -8,18 +8,20 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.ManyToOne;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @Entity
-public class VoteOption extends BaseEntity {
-    @NotBlank
-    private String optionText;
+public class MessageReaction extends BaseEntity {
+    @ManyToOne
+    private ChatMessage message;
+
+    @ManyToOne
+    private Reaction reaction;
 
     @ManyToMany
-    private List<User> votedUsers;
-
+    private List<User> author;
 }

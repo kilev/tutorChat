@@ -5,6 +5,7 @@ import com.kil.tutor.dto.chat.GetChatResponse;
 import com.kil.tutor.dto.chat.WebSocketMessage;
 import com.kil.tutor.dto.chat.message.GetMessagesRequest;
 import com.kil.tutor.dto.chat.message.GetMessagesResponse;
+import com.kil.tutor.dto.chat.reaction.WebSocketReaction;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.message.ChatMessage;
 import com.kil.tutor.entity.user.User;
@@ -59,7 +60,7 @@ public class ChatController {
         return mapper.map(messagePage);
     }
 
-    @MessageMapping("/chat")
+    @MessageMapping("/chat/simpleMessage")
     public void message(@Payload WebSocketMessage message) {
         ChatMessage savedMessage = chatService.saveMessage(message.getUserId(), message.getChatId(), message.getText());
         message.setDateTime(savedMessage.getDateTime());
@@ -68,6 +69,11 @@ public class ChatController {
         List<User> chatParticipants = chatService.getChatParticipants(message.getChatId());
         chatParticipants.forEach(user -> messagingTemplate
                 .convertAndSendToUser(user.getId().toString(), "/messages", message));
+
+    }
+
+    @MessageMapping("/chat/addReaction")
+    public void addReaction(@Payload WebSocketReaction reaction) {
 
     }
 

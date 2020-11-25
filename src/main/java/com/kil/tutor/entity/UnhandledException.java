@@ -1,31 +1,26 @@
 package com.kil.tutor.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Lob;
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 @Entity
-public class UnhandledException {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull
-    private LocalDateTime dateTime;
-
+public class UnhandledException extends BaseEntity{
     private String message;
 
+    @Lob
     private String stackTrace;
+
+    @CreationTimestamp
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime dateTime;
 }

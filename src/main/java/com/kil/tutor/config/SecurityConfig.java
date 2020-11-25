@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                        "/webjars" + ANY_POSTFIX)
 //                .permitAll()
 
-                .antMatchers(ANY_POSTFIX).permitAll()//TODO remove after cors fix
+                .antMatchers(ANY_POSTFIX).permitAll()//TODO remove after test integration finished
                 .anyRequest()
                 .authenticated();
     }

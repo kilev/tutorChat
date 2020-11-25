@@ -19,4 +19,10 @@ public class UserService {
     public List<User> getUsers(List<Long> userIds) {
         return userRepository.findAllById(userIds);
     }
+
+    public byte[] getAvatar(Long userId) {
+        User user = userRepository.getOne(userId);
+        return user.getAvatar();
+    }
+
 }

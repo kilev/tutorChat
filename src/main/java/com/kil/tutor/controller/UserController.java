@@ -5,10 +5,8 @@ import com.kil.tutor.dto.user.GetUsersResponse;
 import com.kil.tutor.entity.user.User;
 import com.kil.tutor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,4 +30,13 @@ public class UserController {
         List<User> users = userService.getUsers(request.getUserIds());
         return GetUsersResponse.builder().users(mapper.mapUsers(users)).build();
     }
+
+    @GetMapping(
+            value = "/{userId}" + ApiConsts.AVATAR,
+            produces = MediaType.IMAGE_PNG_VALUE
+    )
+    public byte[] getAvatar(@PathVariable Long userId) {
+        return userService.getAvatar(userId);
+    }
+
 }

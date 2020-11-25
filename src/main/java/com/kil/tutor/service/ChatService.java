@@ -3,6 +3,7 @@ package com.kil.tutor.service;
 import com.kil.tutor.domain.FindMessagesRequest;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.message.ChatMessage;
+import com.kil.tutor.entity.chat.message.MessageReaction;
 import com.kil.tutor.entity.chat.message.SimpleMessage;
 import com.kil.tutor.entity.user.User;
 import com.kil.tutor.repository.ChatRepository;
@@ -80,6 +81,11 @@ public class ChatService {
         message.setAuthor(userRepository.getOne(userId));
         message.setChat(chatRepository.getOne(chatId));
         return messageRepository.save(message);
+    }
+
+    public List<MessageReaction> getReactions(Long messageId) {
+        ChatMessage message = messageRepository.getOne(messageId);
+        return message.getReactions();
     }
 
 }

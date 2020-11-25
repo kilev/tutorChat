@@ -1,8 +1,13 @@
 package com.kil.tutor.entity.user;
 
 import com.kil.tutor.domain.Role;
+import com.kil.tutor.entity.BaseEntity;
 import com.kil.tutor.entity.chat.Chat;
+import com.talanlabs.avatargenerator.Avatar;
+import com.talanlabs.avatargenerator.GitHubAvatar;
+import com.talanlabs.avatargenerator.layers.backgrounds.RandomColorPaintBackgroundLayer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,18 +18,18 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
-
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "app_user")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class User implements UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User extends BaseEntity implements UserDetails {
+    private static final Avatar AVATAR_GENERATOR = GitHubAvatar.newAvatarBuilder(900, 8)
+            .layers(new RandomColorPaintBackgroundLayer())
+            .build();
 
     @Column(unique = true)
     @NotBlank
@@ -49,11 +54,17 @@ public class User implements UserDetails {
     @NotBlank
     private String firstName;
 
-    private String avatarUrl;
+    @Lob
+    private byte[] avatar;
 
     @CreationTimestamp
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime lastOnlineDate;
+
+    @PrePersist
+    private void prePersist() {
+        avatar = AVATAR_GENERATOR.createAsPngBytes(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

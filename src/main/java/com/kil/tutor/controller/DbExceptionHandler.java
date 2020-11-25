@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @ControllerAdvice
@@ -23,7 +22,6 @@ public class DbExceptionHandler {
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<String> handleException(Exception exception) {
         UnhandledException unhandledException = UnhandledException.builder()
-                .dateTime(LocalDateTime.now())
                 .message(exception.getMessage())
                 .stackTrace(Arrays.toString(exception.getStackTrace()))
                 .build();

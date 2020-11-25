@@ -12,7 +12,7 @@ public class H2ConsoleServletConfiguration {
         ServletRegistrationBean<org.h2.server.web.WebServlet> registration = new ServletRegistrationBean<>( new org.h2.server.web.WebServlet());
         registration.addUrlMappings("/h2-console/*");
         registration.addInitParameter("webAllowOthers", "true");
-        registration.addInitParameter("webPort", "8080");// <-- the port your wish goes here
+        registration.addInitParameter("webPort", "8081");
 
         return registration;
     }

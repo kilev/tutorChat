@@ -10,7 +10,6 @@ import javax.validation.constraints.NotEmpty;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class GroupChat extends Chat{
-
     @NotEmpty
     private String name;
 }

@@ -1,22 +1,19 @@
 package com.kil.tutor.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
 @Entity
-public class RefreshToken {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class RefreshToken extends BaseEntity{
     @NotBlank
     private String token;
 
