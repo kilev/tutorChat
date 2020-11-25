@@ -3,14 +3,16 @@ package com.kil.tutor.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 import org.springframework.util.MimeTypeUtils;
@@ -33,16 +35,9 @@ public class WebSocketConfig extends AbstractSecurityWebSocketMessageBrokerConfi
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/")
-//                .setTaskScheduler(heartBeatScheduler())
-        ;
+        config.enableSimpleBroker("/");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
-    }
-
-    @Bean
-    public TaskScheduler heartBeatScheduler() {
-        return new ThreadPoolTaskScheduler();
     }
 
     @Override
@@ -83,10 +78,19 @@ public class WebSocketConfig extends AbstractSecurityWebSocketMessageBrokerConfi
         return true;
     }
 
-
-
 //    @Override
 //    public void configureClientInboundChannel(ChannelRegistration registration) {
 ////        registration.setInterceptors(authChannelInterceptorAdapter);
 //    }
+
+    public class FilterChannelInterceptor implements ChannelInterceptor {
+        @Override
+        public Message<?> preSend(Message<?> message, MessageChannel channel) {
+            StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+            if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand())) {
+                //TODO update user lastOnlineDate
+            }
+            return message;
+        }
+    }
 }

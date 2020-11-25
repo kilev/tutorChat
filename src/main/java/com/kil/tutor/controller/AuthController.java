@@ -4,7 +4,6 @@ import com.kil.tutor.domain.auth.UserAuth;
 import com.kil.tutor.dto.auth.AuthResponse;
 import com.kil.tutor.dto.auth.LoginRequest;
 import com.kil.tutor.service.AuthService;
-import com.kil.tutor.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,21 +12,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+//TODO enable refresh token feature when clients support it.
 @RestController
 @RequestMapping(ApiConsts.AUTH)
 public class AuthController {
     private final AuthService authService;
-    private final RefreshTokenService refreshTokenService;
+//    private final RefreshTokenService refreshTokenService;
     private final ServiceMapper mapper;
 
     @Autowired
     public AuthController(
             AuthService authService,
-            RefreshTokenService refreshTokenService,
+//            RefreshTokenService refreshTokenService,
             ServiceMapper mapper
     ) {
         this.authService = authService;
-        this.refreshTokenService = refreshTokenService;
+//        this.refreshTokenService = refreshTokenService;
         this.mapper = mapper;
     }
 

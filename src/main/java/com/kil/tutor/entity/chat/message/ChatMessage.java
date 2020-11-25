@@ -4,6 +4,7 @@ import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.user.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -26,7 +27,7 @@ public class ChatMessage {
     @ManyToOne
     private User author;
 
-    @NotNull
+    @CreationTimestamp
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime dateTime;
 

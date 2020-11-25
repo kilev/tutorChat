@@ -42,7 +42,7 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Instant jwtExpirationTime = getJwtExpireTime();
+        Instant jwtExpirationTime = createJwtExpireTime();
         String token = jwtProvider.generateToken(authentication, jwtExpirationTime);
 //        String refreshToken = refreshTokenService.generate(request.getUsername()).getToken();
         return UserAuth.builder()
@@ -68,7 +68,7 @@ public class AuthService {
 //                .build();
 //    }
 
-    private Instant getJwtExpireTime() {
+    private Instant createJwtExpireTime() {
         return Instant.now().plus(jwtExpirationDuration);
     }
 }

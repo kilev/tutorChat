@@ -5,6 +5,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class GetChatMessagesResponse {
+public class GetMessagesResponse {
     private List<MessageInfo> messages;
+    private Integer TotalPages;
+    private Long totalElements;
 }

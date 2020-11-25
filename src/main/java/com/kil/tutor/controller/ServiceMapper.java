@@ -1,5 +1,6 @@
 package com.kil.tutor.controller;
 
+import com.kil.tutor.domain.FindMessagesRequest;
 import com.kil.tutor.domain.auth.UserAuth;
 import com.kil.tutor.domain.auth.UserAuthRefreshRequest;
 import com.kil.tutor.domain.auth.UserAuthRequest;
@@ -9,9 +10,7 @@ import com.kil.tutor.dto.auth.RefreshRequest;
 import com.kil.tutor.dto.chat.ChatInfo;
 import com.kil.tutor.dto.chat.DirectInfo;
 import com.kil.tutor.dto.chat.GroupInfo;
-import com.kil.tutor.dto.chat.message.MessageInfo;
-import com.kil.tutor.dto.chat.message.SimpleMessageInfo;
-import com.kil.tutor.dto.chat.message.VoteInfo;
+import com.kil.tutor.dto.chat.message.*;
 import com.kil.tutor.dto.user.StudentInfo;
 import com.kil.tutor.dto.user.TutorInfo;
 import com.kil.tutor.dto.user.UserInfo;
@@ -27,6 +26,7 @@ import com.kil.tutor.entity.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
@@ -77,6 +77,14 @@ public abstract class ServiceMapper {
         return user.getId();
     }
 
+    public GetMessagesResponse map(Page<ChatMessage> messagePage) {
+        GetMessagesResponse response = new GetMessagesResponse();
+        response.setMessages(map(messagePage.toList()));
+        response.setTotalElements(messagePage.getTotalElements());
+        response.setTotalPages(messagePage.getTotalPages());
+        return response;
+    }
+
     public abstract List<MessageInfo> map(List<ChatMessage> messages);
 
     protected MessageInfo map(ChatMessage message) {
@@ -92,8 +100,10 @@ public abstract class ServiceMapper {
     @Mapping(target = "userId", source = "author.id")
     protected abstract SimpleMessageInfo map(SimpleMessage message);
 
-//    @Mapping(target = "authorId", source = "author.id")
-    protected VoteInfo map(Vote message){
+    //    @Mapping(target = "authorId", source = "author.id")
+    protected VoteInfo map(Vote message) {
         return null;//TODO
     }
+
+    public abstract FindMessagesRequest map(Long chatId, GetMessagesRequest request);
 }
