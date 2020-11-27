@@ -77,10 +77,6 @@ public abstract class ServiceMapper {
     @Mapping(target = "id", source = "group.id")
     protected abstract GroupInfo map(GroupChat group, Long unreadMessageCount, MessageInfo lastMessage);
 
-//    protected List<Long> mapToUserIds(List<User> users){
-//        return
-//    };
-
     protected Long mapToUserId(User user) {
         return user.getId();
     }

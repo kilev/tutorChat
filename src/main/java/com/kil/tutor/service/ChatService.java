@@ -92,6 +92,12 @@ public class ChatService {
     public List<MessageReaction> getReactions(Long messageId) {
         ChatMessage message = messageRepository.getOne(messageId);
         List<MessageReaction> reactions = message.getReactions();
+        Set<Long> authorIds = reactions.stream()
+                .flatMap(reaction -> reaction.getAuthors().stream())
+                .map(User::getId)
+                .collect(Collectors.toSet());
+
+        log.info("found {} reactions for message {}, with total authors {}", reactions.size(), messageId, authorIds.size());
         return reactions;
     }
 
