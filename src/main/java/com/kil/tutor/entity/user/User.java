@@ -3,6 +3,7 @@ package com.kil.tutor.entity.user;
 import com.kil.tutor.domain.Role;
 import com.kil.tutor.entity.BaseEntity;
 import com.kil.tutor.entity.chat.Chat;
+import com.kil.tutor.entity.chat.message.Reaction;
 import com.talanlabs.avatargenerator.Avatar;
 import com.talanlabs.avatargenerator.GitHubAvatar;
 import com.talanlabs.avatargenerator.layers.backgrounds.RandomColorPaintBackgroundLayer;
@@ -45,6 +46,10 @@ public class User extends BaseEntity implements UserDetails {
 
     @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
     private List<Chat> chats;
+
+    //TODO add the ability to buy reactions (monetization)
+    @ManyToMany
+    private List<Reaction> availableReactions;
 
     @NotBlank
     private String lastName;

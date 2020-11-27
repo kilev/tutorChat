@@ -5,9 +5,12 @@ import com.kil.tutor.dto.chat.GetChatResponse;
 import com.kil.tutor.dto.chat.WebSocketMessage;
 import com.kil.tutor.dto.chat.message.GetMessagesRequest;
 import com.kil.tutor.dto.chat.message.GetMessagesResponse;
+import com.kil.tutor.dto.chat.reaction.GetReactionsRequest;
+import com.kil.tutor.dto.chat.reaction.GetReactionsResponse;
 import com.kil.tutor.dto.chat.reaction.WebSocketReaction;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.message.ChatMessage;
+import com.kil.tutor.entity.chat.message.MessageReaction;
 import com.kil.tutor.entity.user.User;
 import com.kil.tutor.service.ChatService;
 import lombok.extern.slf4j.Slf4j;
@@ -54,10 +57,18 @@ public class ChatController {
         return GetChatResponse.builder().chats(chatInfos).build();
     }
 
-    @PostMapping("/{id}" + ApiConsts.MESSAGES)
-    public GetMessagesResponse getMessages(@PathVariable Long id, @RequestBody GetMessagesRequest request) {
-        Page<ChatMessage> messagePage = chatService.getMessages(mapper.map(id, request));
+    @PostMapping("/{chatId}" + ApiConsts.MESSAGES)
+    public GetMessagesResponse getMessages(@PathVariable Long chatId, @RequestBody GetMessagesRequest request) {
+        Page<ChatMessage> messagePage = chatService.getMessages(mapper.map(chatId, request));
         return mapper.map(messagePage);
+    }
+
+    @GetMapping(ApiConsts.MESSAGE_REACTIONS)
+    public GetReactionsResponse getReactions(GetReactionsRequest request) {
+        List<MessageReaction> reactions = chatService.getReactions(request.getMessageId());
+        return GetReactionsResponse.builder()
+                .reactions(mapper.mapReactions(reactions))
+                .build();
     }
 
     @MessageMapping("/chat/simpleMessage")

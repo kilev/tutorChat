@@ -11,6 +11,7 @@ import com.kil.tutor.dto.chat.ChatInfo;
 import com.kil.tutor.dto.chat.DirectInfo;
 import com.kil.tutor.dto.chat.GroupInfo;
 import com.kil.tutor.dto.chat.message.*;
+import com.kil.tutor.dto.chat.reaction.ReactionInfo;
 import com.kil.tutor.dto.user.StudentInfo;
 import com.kil.tutor.dto.user.TutorInfo;
 import com.kil.tutor.dto.user.UserInfo;
@@ -18,6 +19,7 @@ import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.DirectChat;
 import com.kil.tutor.entity.chat.GroupChat;
 import com.kil.tutor.entity.chat.message.ChatMessage;
+import com.kil.tutor.entity.chat.message.MessageReaction;
 import com.kil.tutor.entity.chat.message.SimpleMessage;
 import com.kil.tutor.entity.chat.message.Vote;
 import com.kil.tutor.entity.user.Student;
@@ -73,6 +75,10 @@ public abstract class ServiceMapper {
     @Mapping(target = "id", source = "group.id")
     protected abstract GroupInfo map(GroupChat group, Long unreadMessageCount, MessageInfo lastMessage);
 
+//    protected List<Long> mapToUserIds(List<User> users){
+//        return
+//    };
+
     protected Long mapToUserId(User user) {
         return user.getId();
     }
@@ -106,4 +112,10 @@ public abstract class ServiceMapper {
     }
 
     public abstract FindMessagesRequest map(Long chatId, GetMessagesRequest request);
+
+    public abstract List<ReactionInfo> mapReactions(List<MessageReaction> reactions);
+
+    @Mapping(target = "reactionId", source = "id")
+    @Mapping(target = "authorIds", source = "authors")
+    public abstract ReactionInfo map(MessageReaction reaction);
 }

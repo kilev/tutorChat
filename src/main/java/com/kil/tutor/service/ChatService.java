@@ -85,7 +85,8 @@ public class ChatService {
 
     public List<MessageReaction> getReactions(Long messageId) {
         ChatMessage message = messageRepository.getOne(messageId);
-        return message.getReactions();
+        List<MessageReaction> reactions = message.getReactions();
+        return reactions;
     }
 
 }

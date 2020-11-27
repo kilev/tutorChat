@@ -4,12 +4,12 @@ import com.kil.tutor.domain.Role;
 import com.kil.tutor.entity.chat.DirectChat;
 import com.kil.tutor.entity.chat.GroupChat;
 import com.kil.tutor.entity.chat.message.ChatMessage;
+import com.kil.tutor.entity.chat.message.MessageReaction;
+import com.kil.tutor.entity.chat.message.Reaction;
 import com.kil.tutor.entity.chat.message.SimpleMessage;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
-import com.kil.tutor.repository.ChatRepository;
-import com.kil.tutor.repository.MessageRepository;
-import com.kil.tutor.repository.UserRepository;
+import com.kil.tutor.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,8 @@ import java.util.Collections;
 public class InitSampleDataService {
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
+    private final ReactionRepository reactionRepository;
+    private final MessageReactionRepository messageReactionRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -30,11 +32,15 @@ public class InitSampleDataService {
     public InitSampleDataService(
             ChatRepository chatRepository,
             MessageRepository messageRepository,
+            ReactionRepository reactionRepository,
+            MessageReactionRepository messageReactionRepository,
             UserRepository userRepository,
             PasswordEncoder passwordEncoder
     ) {
         this.chatRepository = chatRepository;
         this.messageRepository = messageRepository;
+        this.reactionRepository = reactionRepository;
+        this.messageReactionRepository = messageReactionRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -50,7 +56,6 @@ public class InitSampleDataService {
         tutor.setLastName("Иванова");
         tutor.setRoles(Collections.singletonList(Role.USER));
         tutor.setStatus("Готова принимать долги!");
-        userRepository.save(tutor);
 
         Student student = new Student();
         student.setUsername("student");
@@ -60,27 +65,42 @@ public class InitSampleDataService {
         student.setLastName("Иванов");
         student.setGroupName("AVT-713");
         student.setRoles(Collections.singletonList(Role.USER));
-        userRepository.save(student);
+        userRepository.saveAll(Arrays.asList(tutor, student));
 
         DirectChat direct = new DirectChat();
         direct.setParticipants(Arrays.asList(tutor, student));
-        chatRepository.save(direct);
 
         GroupChat group = new GroupChat();
         group.setParticipants(Arrays.asList(tutor, student));
         group.setName("AVT-713");
-        chatRepository.save(group);
+        chatRepository.saveAll(Arrays.asList(direct, group));
 
         ChatMessage initDirectMessage = new SimpleMessage();
         initDirectMessage.setChat(direct);
         initDirectMessage.setAuthor(tutor);
         initDirectMessage.setMessageText("Привет, студент!");
-        messageRepository.save(initDirectMessage);
 
         ChatMessage initGroupMessage = new SimpleMessage();
         initGroupMessage.setChat(group);
         initGroupMessage.setAuthor(tutor);
         initGroupMessage.setMessageText("Привет, студенты!");
-        messageRepository.save(initGroupMessage);
+        messageRepository.saveAll(Arrays.asList(initDirectMessage, initGroupMessage));
+
+        Reaction likeReaction = new Reaction();
+        likeReaction.setName("LIKE");
+        Reaction dislikeReaction = new Reaction();
+        dislikeReaction.setName("DISLIKE");
+        reactionRepository.saveAll(Arrays.asList(likeReaction, dislikeReaction));
+
+        MessageReaction initDirectMessageReaction = new MessageReaction();
+        initDirectMessageReaction.setMessage(initDirectMessage);
+        initDirectMessageReaction.setReaction(likeReaction);
+        initDirectMessageReaction.setAuthors(Collections.singletonList(student));
+
+        MessageReaction initGroupMessageReaction = new MessageReaction();
+        initGroupMessageReaction.setMessage(initGroupMessage);
+        initGroupMessageReaction.setReaction(dislikeReaction);
+        initGroupMessageReaction.setAuthors(Collections.singletonList(tutor));
+        messageReactionRepository.saveAll(Arrays.asList(initDirectMessageReaction, initGroupMessageReaction));
     }
 }

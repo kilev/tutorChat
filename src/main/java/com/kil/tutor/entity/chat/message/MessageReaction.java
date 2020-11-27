@@ -23,5 +23,5 @@ public class MessageReaction extends BaseEntity {
     private Reaction reaction;
 
     @ManyToMany
-    private List<User> author;
+    private List<User> authors;
 }
