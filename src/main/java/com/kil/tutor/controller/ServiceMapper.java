@@ -1,6 +1,7 @@
 package com.kil.tutor.controller;
 
 import com.kil.tutor.domain.FindMessagesRequest;
+import com.kil.tutor.domain.MessageReactionInfo;
 import com.kil.tutor.domain.auth.UserAuth;
 import com.kil.tutor.domain.auth.UserAuthRefreshRequest;
 import com.kil.tutor.domain.auth.UserAuthRequest;
@@ -12,6 +13,7 @@ import com.kil.tutor.dto.chat.DirectInfo;
 import com.kil.tutor.dto.chat.GroupInfo;
 import com.kil.tutor.dto.chat.message.*;
 import com.kil.tutor.dto.chat.reaction.ReactionInfo;
+import com.kil.tutor.dto.chat.reaction.WebSocketReaction;
 import com.kil.tutor.dto.user.StudentInfo;
 import com.kil.tutor.dto.user.TutorInfo;
 import com.kil.tutor.dto.user.UserInfo;
@@ -118,4 +120,7 @@ public abstract class ServiceMapper {
     @Mapping(target = "reactionId", source = "id")
     @Mapping(target = "authorIds", source = "authors")
     public abstract ReactionInfo map(MessageReaction reaction);
+
+    public abstract MessageReactionInfo map(WebSocketReaction reaction);
+
 }

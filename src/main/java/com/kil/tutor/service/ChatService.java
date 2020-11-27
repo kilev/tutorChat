@@ -1,22 +1,21 @@
 package com.kil.tutor.service;
 
+import com.google.common.collect.Collections2;
 import com.kil.tutor.domain.FindMessagesRequest;
+import com.kil.tutor.domain.MessageReactionInfo;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.message.ChatMessage;
 import com.kil.tutor.entity.chat.message.MessageReaction;
 import com.kil.tutor.entity.chat.message.SimpleMessage;
 import com.kil.tutor.entity.user.User;
-import com.kil.tutor.repository.ChatRepository;
-import com.kil.tutor.repository.MessageRepository;
-import com.kil.tutor.repository.UserRepository;
+import com.kil.tutor.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,16 +26,22 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+    private final MessageReactionRepository messageReactionRepository;
+    private final ReactionRepository reactionRepository;
 
     @Autowired
     public ChatService(
             ChatRepository chatRepository,
             UserRepository userRepository,
-            MessageRepository messageRepository
+            MessageRepository messageRepository,
+            MessageReactionRepository messageReactionRepository,
+            ReactionRepository reactionRepository
     ) {
         this.chatRepository = chatRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
+        this.messageReactionRepository = messageReactionRepository;
+        this.reactionRepository = reactionRepository;
     }
 
     @Transactional(readOnly = true)
@@ -83,10 +88,54 @@ public class ChatService {
         return messageRepository.save(message);
     }
 
+    @Transactional(readOnly = true)
     public List<MessageReaction> getReactions(Long messageId) {
         ChatMessage message = messageRepository.getOne(messageId);
         List<MessageReaction> reactions = message.getReactions();
         return reactions;
+    }
+
+    @Transactional
+    public MessageReaction updateReaction(MessageReactionInfo reactionInfo) {
+        Long messageId = reactionInfo.getMessageId();
+        Long reactionId = reactionInfo.getReactionId();
+
+        MessageReaction exampleReaction = MessageReaction.builder()
+                .message(messageRepository.getOne(messageId))
+                .reaction(reactionRepository.getOne(reactionId))
+                .build();
+        Example<MessageReaction> reactionExample = Example.of(exampleReaction);
+        Optional<MessageReaction> existReaction = messageReactionRepository.findOne(reactionExample);
+
+        MessageReaction reaction;
+        if (existReaction.isPresent()) {
+            log.info("reaction {} exists for message {}", reactionId, messageId);
+
+            reaction = existReaction.get();
+            Collection<Long> authorIds = Collections2.transform(reaction.getAuthors(), User::getId);
+
+            Long authorId = reactionInfo.getAuthorId();
+            if (authorIds.contains(authorId)) {
+                authorIds.remove(authorId);
+            } else {
+                authorIds.add(authorId);
+            }
+        } else {
+            log.info("reaction {} not exists for message {}. Creating new", reactionId, messageId);
+            reaction = MessageReaction.builder()
+                    .message(messageRepository.getOne(messageId))
+                    .reaction(reactionRepository.getOne(reactionId))
+                    .authors(Collections.singletonList(userRepository.getOne(reactionInfo.getAuthorId())))
+                    .build();
+        }
+
+        return messageReactionRepository.save(reaction);
+    }
+
+    @Transactional(readOnly = true)
+    public Long getChatId(Long messageId){
+        ChatMessage chat = messageRepository.getOne(messageId);
+        return chat.getId();
     }
 
 }

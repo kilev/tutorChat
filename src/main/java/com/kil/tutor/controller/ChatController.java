@@ -25,6 +25,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,8 +64,8 @@ public class ChatController {
         return mapper.map(messagePage);
     }
 
-    @GetMapping(ApiConsts.MESSAGE_REACTIONS)
-    public GetReactionsResponse getReactions(GetReactionsRequest request) {
+    @PostMapping(ApiConsts.MESSAGE_REACTIONS)
+    public GetReactionsResponse getReactions(@Valid @RequestBody GetReactionsRequest request) {
         List<MessageReaction> reactions = chatService.getReactions(request.getMessageId());
         return GetReactionsResponse.builder()
                 .reactions(mapper.mapReactions(reactions))
@@ -76,16 +77,14 @@ public class ChatController {
         ChatMessage savedMessage = chatService.saveMessage(message.getUserId(), message.getChatId(), message.getText());
         message.setDateTime(savedMessage.getDateTime());
         message.setMessageId(savedMessage.getId());
-
-        List<User> chatParticipants = chatService.getChatParticipants(message.getChatId());
-        chatParticipants.forEach(user -> messagingTemplate
-                .convertAndSendToUser(user.getId().toString(), "/messages", message));
-
+        
+        sendToChatByChatId(message.getChatId(), "/messages", message);
     }
 
-    @MessageMapping("/chat/addReaction")
-    public void addReaction(@Payload WebSocketReaction reaction) {
-
+    @MessageMapping("/chat/updateReaction")
+    public void updateReaction(@Valid @Payload WebSocketReaction reaction) {
+        MessageReaction updatedReaction = chatService.updateReaction(mapper.map(reaction));
+        sendToChatByMessageId(updatedReaction.getMessage().getId(), "/reactions", mapper.map(updatedReaction));
     }
 
     @MessageExceptionHandler
@@ -93,6 +92,16 @@ public class ChatController {
     public String handleException(Throwable exception) {
         log.error("WebSocketException: {}", Arrays.toString(exception.getStackTrace()));
         return exception.getMessage();
+    }
+
+    private void sendToChatByMessageId(Long messageId, String destination, Object message){
+        sendToChatByChatId(chatService.getChatId(messageId), destination, message);
+    }
+
+    private void sendToChatByChatId(Long chatId, String destination, Object message) {
+        List<User> chatParticipants = chatService.getChatParticipants(chatId);
+        chatParticipants.forEach(user -> messagingTemplate
+                .convertAndSendToUser(user.getId().toString(), destination, message));
     }
 
 }
