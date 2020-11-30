@@ -1,7 +1,7 @@
 package com.kil.tutor.controller;
 
 import com.kil.tutor.domain.FindMessagesRequest;
-import com.kil.tutor.domain.MessageReactionInfo;
+import com.kil.tutor.domain.MessageReactionUpdate;
 import com.kil.tutor.domain.auth.UserAuth;
 import com.kil.tutor.domain.auth.UserAuthRefreshRequest;
 import com.kil.tutor.domain.auth.UserAuthRequest;
@@ -12,6 +12,7 @@ import com.kil.tutor.dto.chat.ChatInfo;
 import com.kil.tutor.dto.chat.DirectInfo;
 import com.kil.tutor.dto.chat.GroupInfo;
 import com.kil.tutor.dto.chat.message.*;
+import com.kil.tutor.dto.chat.reaction.MessageReactionsInfo;
 import com.kil.tutor.dto.chat.reaction.ReactionInfo;
 import com.kil.tutor.dto.chat.reaction.WebSocketReaction;
 import com.kil.tutor.dto.user.StudentInfo;
@@ -63,16 +64,27 @@ public abstract class ServiceMapper {
 
     protected abstract StudentInfo map(Student student);
 
-    public ChatInfo map(Chat chat, Long unreadMessageCount, MessageInfo lastMessage) {
+    public ChatInfo map(Chat chat, Long requestedUserId, Long unreadMessageCount, MessageInfo lastMessage) {
         if (chat instanceof DirectChat) {
-            return this.map((DirectChat) chat, unreadMessageCount, lastMessage);
+            return this.map((DirectChat) chat, requestedUserId, unreadMessageCount, lastMessage);
         } else if (chat instanceof GroupChat) {
             return this.map((GroupChat) chat, unreadMessageCount, lastMessage);
         } else throw new UnsupportedOperationException();
     }
 
     @Mapping(target = "id", source = "direct.id")
-    protected abstract DirectInfo map(DirectChat direct, Long unreadMessageCount, MessageInfo lastMessage);
+    protected abstract DirectInfo map(DirectChat direct, Long requestedUserId, Long unreadMessageCount, MessageInfo lastMessage);
+
+//    @AfterMapping
+//    protected void afterDirectMap(
+//            @MappingTarget DirectInfo directInfo,
+//            DirectChat direct,
+//            Long requestedUserId,
+//            Long unreadMessageCount,
+//            MessageInfo lastMessage
+//    ) {
+//        directInfo.set
+//    }
 
     @Mapping(target = "id", source = "group.id")
     protected abstract GroupInfo map(GroupChat group, Long unreadMessageCount, MessageInfo lastMessage);
@@ -99,7 +111,6 @@ public abstract class ServiceMapper {
         } else throw new UnsupportedOperationException();
     }
 
-
     @Mapping(target = "text", source = "messageText")
     @Mapping(target = "userId", source = "author.id")
     protected abstract SimpleMessageInfo map(SimpleMessage message);
@@ -113,10 +124,13 @@ public abstract class ServiceMapper {
 
     public abstract List<ReactionInfo> mapReactions(List<MessageReaction> reactions);
 
-    @Mapping(target = "reactionId", source = "id")
+
+
+    @Mapping(target = "name", source = "reaction.name")
     @Mapping(target = "authorIds", source = "authors")
     public abstract ReactionInfo map(MessageReaction reaction);
 
-    public abstract MessageReactionInfo map(WebSocketReaction reaction);
+    public abstract MessageReactionUpdate map(WebSocketReaction reaction);
 
+    public abstract MessageReactionsInfo mapToMessageReactionInfo(Long messageId, Long chatId, List<MessageReaction> reactions);
 }

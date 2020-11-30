@@ -26,6 +26,7 @@ public class DbExceptionHandler {
                 .stackTrace(Arrays.toString(exception.getStackTrace()))
                 .build();
         UnhandledException savedException = exceptionRepository.save(unhandledException);
-        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("errorId: " + savedException.getId());
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                .body(savedException.getMessage() + ". ExceptionId: " + savedException.getId());
     }
 }

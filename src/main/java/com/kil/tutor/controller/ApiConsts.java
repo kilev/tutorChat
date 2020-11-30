@@ -19,4 +19,6 @@ public class ApiConsts {
     public static final String CHAT = "/chat";
     public static final String MESSAGES = "/messages";
     public static final String MESSAGE_REACTIONS = "/message/reactions";
+    public static final String REACTIONS = "/reactions";
+    public static final String REACTION_ICONS = "/reactions/icons";
 }

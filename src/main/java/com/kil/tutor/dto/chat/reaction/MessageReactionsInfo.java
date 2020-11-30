@@ -1,13 +1,12 @@
 package com.kil.tutor.dto.chat.reaction;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
-@Builder
 @Data
-public class GetReactionsResponse {
+public class MessageReactionsInfo {
+    private Long chatId;
+    private Long messageId;
     private List<ReactionInfo> reactions;
-
 }

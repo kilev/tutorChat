@@ -24,6 +24,9 @@
                 stompClient.subscribe('/user/' + userId + '/messages', function(messageOutput) {
                     showMessageOutput(JSON.parse(messageOutput.body));
                 });
+                stompClient.subscribe('/user/' + userId + '/reactions', function (reaction){
+                    console.log(JSON.parse(reaction.body));
+                })
             });
         }
 
@@ -39,7 +42,13 @@
             var userId = document.getElementById('userId').value;
             var chatId = document.getElementById('chatId').value;
             var text = document.getElementById('text').value;
-            stompClient.send("/app/chat", {}, JSON.stringify({'userId':userId, 'chatId': chatId, 'text':text}));
+            stompClient.send("/app/chat/simpleMessage", {}, JSON.stringify({'userId':userId, 'chatId': chatId, 'text':text}));
+        }
+
+        function updateReaction(){
+            var userId = document.getElementById('userId').value;
+            var chatId = document.getElementById('chatId').value;
+            stompClient.send("/app/chat/updateReaction", {}, JSON.stringify({'authorId': userId, 'chatId': chatId, 'messageId': 2, 'reactionName': 'like'}));
         }
 
         function showMessageOutput(messageOutput) {
@@ -64,6 +73,7 @@
         <button id="disconnect" disabled="disabled" onclick="disconnect();">
             Disconnect
         </button>
+        <button id="updateReaction" onclick="updateReaction();">Update reaction</button>
     </div>
     <br />
     <div id="conversationDiv">

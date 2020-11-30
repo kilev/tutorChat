@@ -2,9 +2,11 @@ package com.kil.tutor.dto.chat.message;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.kil.tutor.dto.chat.reaction.ReactionInfo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -19,4 +21,5 @@ public class MessageInfo {
     private String text;
     private Long userId;
     private LocalDateTime dateTime;
+    private List<ReactionInfo> reactions;
 }

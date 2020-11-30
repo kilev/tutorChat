@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class ReactionInfo {
-    private Long reactionId;
+    private String name;
     private List<Long> authorIds;
 }

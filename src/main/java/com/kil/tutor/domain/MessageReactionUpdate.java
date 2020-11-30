@@ -3,8 +3,8 @@ package com.kil.tutor.domain;
 import lombok.Data;
 
 @Data
-public class MessageReactionInfo {
+public class MessageReactionUpdate {
     private Long authorId;
     private Long messageId;
-    private Long reactionId;
+    private String reactionName;
 }

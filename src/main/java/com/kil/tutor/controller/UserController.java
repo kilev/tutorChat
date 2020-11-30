@@ -31,10 +31,7 @@ public class UserController {
         return GetUsersResponse.builder().users(mapper.mapUsers(users)).build();
     }
 
-    @GetMapping(
-            value = "/{userId}" + ApiConsts.AVATAR,
-            produces = MediaType.IMAGE_PNG_VALUE
-    )
+    @GetMapping(value = "/{userId}" + ApiConsts.AVATAR, produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getAvatar(@PathVariable Long userId) {
         return userService.getAvatar(userId);
     }

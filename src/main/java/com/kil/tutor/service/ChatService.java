@@ -1,11 +1,11 @@
 package com.kil.tutor.service;
 
-import com.google.common.collect.Collections2;
 import com.kil.tutor.domain.FindMessagesRequest;
-import com.kil.tutor.domain.MessageReactionInfo;
+import com.kil.tutor.domain.MessageReactionUpdate;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.message.ChatMessage;
 import com.kil.tutor.entity.chat.message.MessageReaction;
+import com.kil.tutor.entity.chat.message.Reaction;
 import com.kil.tutor.entity.chat.message.SimpleMessage;
 import com.kil.tutor.entity.user.User;
 import com.kil.tutor.repository.*;
@@ -15,13 +15,20 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class ChatService {
     private static final int DEFAULT_MESSAGE_PAGE_SIZE = 20;
+    private static final int MAX_MESSAGE_PAGE_SIZE = 100;
+
+    ExampleMatcher AUTHOR_EXIST_REACTION_MATCHER = ExampleMatcher.matchingAll()
+            .withMatcher("authors", ExampleMatcher.GenericPropertyMatchers.contains());
 
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
@@ -70,12 +77,7 @@ public class ChatService {
         Example<ChatMessage> messageExample = Example.of(exampleMessage);
 
         Page<ChatMessage> messages = messageRepository.findAll(messageExample, pageRequest);
-        Set<Long> authorIds = messages.stream()
-                .map(ChatMessage::getAuthor)
-                .map(User::getId)
-                .collect(Collectors.toSet());
-        log.info("found {} messages with authorIds {} for chatId {}",
-                messages.getTotalElements(), authorIds, request.getChatId());
+        log.info("found {} messages for chatId {}", messages.getTotalElements(), request.getChatId());
         return messages;
     }
 
@@ -88,60 +90,80 @@ public class ChatService {
         return messageRepository.save(message);
     }
 
-    @Transactional(readOnly = true)
-    public List<MessageReaction> getReactions(Long messageId) {
-        ChatMessage message = messageRepository.getOne(messageId);
-        List<MessageReaction> reactions = message.getReactions();
-        Set<Long> authorIds = reactions.stream()
-                .flatMap(reaction -> reaction.getAuthors().stream())
-                .map(User::getId)
-                .collect(Collectors.toSet());
-
-        log.info("found {} reactions for message {}, with total authors {}", reactions.size(), messageId, authorIds.size());
-        return reactions;
-    }
-
     @Transactional
-    public MessageReaction updateReaction(MessageReactionInfo reactionInfo) {
-        Long messageId = reactionInfo.getMessageId();
-        Long reactionId = reactionInfo.getReactionId();
+    public ChatMessage updateMessageReaction(MessageReactionUpdate reactionUpdateInfo) {
+        Long reactionAuthorId = reactionUpdateInfo.getAuthorId();
+        Long messageId = reactionUpdateInfo.getMessageId();
+        String reactionName = reactionUpdateInfo.getReactionName().toUpperCase();
 
-        MessageReaction exampleReaction = MessageReaction.builder()
-                .message(messageRepository.getOne(messageId))
-                .reaction(reactionRepository.getOne(reactionId))
-                .build();
-        Example<MessageReaction> reactionExample = Example.of(exampleReaction);
-        Optional<MessageReaction> existReaction = messageReactionRepository.findOne(reactionExample);
-
-        MessageReaction reaction;
-        if (existReaction.isPresent()) {
-            log.info("reaction {} exists for message {}", reactionId, messageId);
-
-            reaction = existReaction.get();
-            Collection<Long> authorIds = Collections2.transform(reaction.getAuthors(), User::getId);
-
-            Long authorId = reactionInfo.getAuthorId();
-            if (authorIds.contains(authorId)) {
-                authorIds.remove(authorId);
-            } else {
-                authorIds.add(authorId);
-            }
-        } else {
-            log.info("reaction {} not exists for message {}. Creating new", reactionId, messageId);
-            reaction = MessageReaction.builder()
-                    .message(messageRepository.getOne(messageId))
-                    .reaction(reactionRepository.getOne(reactionId))
-                    .authors(Collections.singletonList(userRepository.getOne(reactionInfo.getAuthorId())))
-                    .build();
+        if (!messageRepository.existsById(messageId)) {
+            throw new IllegalArgumentException("No Message found with id: " + messageId);
+        }
+        if (!reactionRepository.existsById(reactionName)) {
+            throw new IllegalArgumentException("No Reaction found with name: " + reactionName);
+        }
+        if (!userRepository.existsById(reactionAuthorId)) {
+            throw new IllegalArgumentException("No user found with id: " + reactionAuthorId);
         }
 
-        return messageReactionRepository.save(reaction);
+//        ChatMessage message = messageRepository.getOne(messageId);
+
+        User reactionAuthor = userRepository.getOne(reactionAuthorId);
+        MessageReaction exampleReaction = MessageReaction.builder()
+                .message(messageRepository.getOne(messageId))
+                .authors(Collections.singletonList(reactionAuthor))
+                .build();
+        Optional<MessageReaction> existAuthorReaction = messageReactionRepository
+                .findOne(Example.of(exampleReaction, AUTHOR_EXIST_REACTION_MATCHER));
+
+        if (existAuthorReaction.isPresent()) {
+            MessageReaction existReaction = existAuthorReaction.get();
+            existReaction.getAuthors().remove(reactionAuthor);
+
+            if (!existReaction.getReaction().getName().equals(reactionName)) {
+                MessageReaction updatedMessageReaction = getMessageReaction(messageId, reactionName);
+                updatedMessageReaction.getAuthors().add(reactionAuthor);
+            }
+
+            if (existReaction.getAuthors().isEmpty()) {
+                messageReactionRepository.delete(exampleReaction);
+            }
+
+        } else {
+
+        }
+
+        return messageRepository.getOne(messageId);
+    }
+
+    private MessageReaction getMessageReaction(Long messageId, String reactionName) {
+        ChatMessage message = messageRepository.getOne(messageId);
+        Reaction reaction = reactionRepository.getOne(reactionName);
+
+        MessageReaction requiredMessageReaction = MessageReaction.builder()
+                .message(message)
+                .reaction(reaction)
+                .build();
+        Optional<MessageReaction> messageReaction = messageReactionRepository
+                .findOne(Example.of(requiredMessageReaction));
+
+        return messageReaction.orElse(MessageReaction.builder()
+                .message(message)
+                .reaction(reaction)
+                .authors(new ArrayList<>())
+                .build());
     }
 
     @Transactional(readOnly = true)
-    public Long getChatId(Long messageId){
-        ChatMessage chat = messageRepository.getOne(messageId);
-        return chat.getId();
+    public byte[] getReactionImage(String reactionId) {
+        Optional<Reaction> reaction = reactionRepository.findById(reactionId.toUpperCase());
+        return reaction.map(Reaction::getIcon)
+                .orElseThrow(() -> new IllegalArgumentException("IconNotFoundException: " + reactionId));
     }
 
+    public List<String> getAllIconIds() {
+        return reactionRepository.getAllIds().stream()
+                .map(Reaction::getName)
+                .collect(Collectors.toList());
+    }
 }

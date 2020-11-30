@@ -10,8 +10,11 @@ public class WebSocketReaction {
     private Long authorId;
 
     @NotNull
+    private Long chatId;
+
+    @NotNull
     private Long messageId;
 
     @NotNull
-    private Long reactionId;
+    private String reactionName;
 }

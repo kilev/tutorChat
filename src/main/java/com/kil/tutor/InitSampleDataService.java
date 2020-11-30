@@ -10,17 +10,26 @@ import com.kil.tutor.entity.chat.message.SimpleMessage;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
 import com.kil.tutor.repository.*;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 
+@Slf4j
 @Service
 public class InitSampleDataService {
+    private static final String PNG_FORMAT = "png";
+
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
     private final ReactionRepository reactionRepository;
@@ -88,9 +97,14 @@ public class InitSampleDataService {
 
         Reaction likeReaction = new Reaction();
         likeReaction.setName("LIKE");
+        likeReaction.setIcon(loadImage("classpath:icons/like.png", PNG_FORMAT));
         Reaction dislikeReaction = new Reaction();
         dislikeReaction.setName("DISLIKE");
-        reactionRepository.saveAll(Arrays.asList(likeReaction, dislikeReaction));
+        dislikeReaction.setIcon(loadImage("classpath:icons/dislike.png", PNG_FORMAT));
+        Reaction zombieLikeReaction = new Reaction();
+        zombieLikeReaction.setName("ZOMBIE_LIKE");
+        zombieLikeReaction.setIcon(loadImage("classpath:icons/zombie-like.png", PNG_FORMAT));
+        reactionRepository.saveAll(Arrays.asList(likeReaction, dislikeReaction, zombieLikeReaction));
 
         MessageReaction initDirectMessageReaction = new MessageReaction();
         initDirectMessageReaction.setMessage(initDirectMessage);
@@ -102,5 +116,13 @@ public class InitSampleDataService {
         initGroupMessageReaction.setReaction(dislikeReaction);
         initGroupMessageReaction.setAuthors(Collections.singletonList(tutor));
         messageReactionRepository.saveAll(Arrays.asList(initDirectMessageReaction, initGroupMessageReaction));
+    }
+
+    @SneakyThrows
+    private byte[] loadImage(String imageName, String format) {
+        BufferedImage bImage = ImageIO.read(ResourceUtils.getFile(imageName));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(bImage, format, bos);
+        return bos.toByteArray();
     }
 }
