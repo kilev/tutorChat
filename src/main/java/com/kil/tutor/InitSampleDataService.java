@@ -12,24 +12,20 @@ import com.kil.tutor.entity.user.Tutor;
 import com.kil.tutor.repository.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 
 @Slf4j
 @Service
 public class InitSampleDataService {
-    private static final String PNG_FORMAT = "png";
-
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
     private final ReactionRepository reactionRepository;
@@ -97,13 +93,13 @@ public class InitSampleDataService {
 
         Reaction likeReaction = new Reaction();
         likeReaction.setName("LIKE");
-        likeReaction.setIcon(loadImage("classpath:icons/like.png", PNG_FORMAT));
+        likeReaction.setIcon(loadImage("/icons/like.png"));
         Reaction dislikeReaction = new Reaction();
         dislikeReaction.setName("DISLIKE");
-        dislikeReaction.setIcon(loadImage("classpath:icons/dislike.png", PNG_FORMAT));
+        dislikeReaction.setIcon(loadImage("/icons/dislike.png"));
         Reaction zombieLikeReaction = new Reaction();
         zombieLikeReaction.setName("ZOMBIE_LIKE");
-        zombieLikeReaction.setIcon(loadImage("classpath:icons/zombie-like.png", PNG_FORMAT));
+        zombieLikeReaction.setIcon(loadImage("/icons/zombie-like.png"));
         reactionRepository.saveAll(Arrays.asList(likeReaction, dislikeReaction, zombieLikeReaction));
 
         MessageReaction initDirectMessageReaction = new MessageReaction();
@@ -119,10 +115,8 @@ public class InitSampleDataService {
     }
 
     @SneakyThrows
-    private byte[] loadImage(String imageName, String format) {
-        BufferedImage bImage = ImageIO.read(ResourceUtils.getFile(imageName));
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(bImage, format, bos);
-        return bos.toByteArray();
+    private byte[] loadImage(String ImagePath) {
+        InputStream inputStream = this.getClass().getResourceAsStream(ImagePath);
+        return IOUtils.toByteArray(inputStream);
     }
 }
