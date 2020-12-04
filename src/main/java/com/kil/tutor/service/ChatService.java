@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,8 +26,6 @@ public class ChatService {
     private static final int DEFAULT_MESSAGE_PAGE_SIZE = 20;
     private static final int MAX_MESSAGE_PAGE_SIZE = 100;
 
-    ExampleMatcher AUTHOR_EXIST_REACTION_MATCHER = ExampleMatcher.matchingAll()
-            .withMatcher("authors", ExampleMatcher.GenericPropertyMatchers.contains());
 
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
@@ -106,27 +103,32 @@ public class ChatService {
             throw new IllegalArgumentException("No user found with id: " + reactionAuthorId);
         }
 
-//        ChatMessage message = messageRepository.getOne(messageId);
-
         User reactionAuthor = userRepository.getOne(reactionAuthorId);
         MessageReaction exampleReaction = MessageReaction.builder()
                 .message(messageRepository.getOne(messageId))
-                .authors(Collections.singletonList(reactionAuthor))
                 .build();
-        Optional<MessageReaction> existAuthorReaction = messageReactionRepository
-                .findOne(Example.of(exampleReaction, AUTHOR_EXIST_REACTION_MATCHER));
+//        Optional<MessageReaction> existAuthorReaction = messageReactionRepository.findOne(Example.of(exampleReaction));
+
+        List<MessageReaction> messageReactions = messageReactionRepository.findAll(Example.of(exampleReaction));
+        Optional<MessageReaction> existAuthorReaction = messageReactions.stream()
+                .filter(messageReaction -> messageReaction.getAuthors().stream()
+                        .anyMatch(author -> author.getId().equals(reactionAuthorId)))
+                .findAny();
 
         if (existAuthorReaction.isPresent()) {
             MessageReaction existReaction = existAuthorReaction.get();
-            existReaction.getAuthors().remove(reactionAuthor);
+            existReaction.getAuthors().removeIf(author -> author.getId().equals(reactionAuthorId));
 
             if (!existReaction.getReaction().getName().equals(reactionName)) {
                 MessageReaction updatedMessageReaction = getMessageReaction(messageId, reactionName);
                 updatedMessageReaction.getAuthors().add(reactionAuthor);
+                messageReactionRepository.save(updatedMessageReaction);
             }
 
             if (existReaction.getAuthors().isEmpty()) {
-                messageReactionRepository.delete(exampleReaction);
+                messageReactionRepository.delete(existReaction);
+            } else {
+                messageReactionRepository.save(existReaction);
             }
 
         } else {
@@ -135,6 +137,7 @@ public class ChatService {
             messageReactionRepository.save(messageReaction);
         }
 
+        messageReactionRepository.flush();
         return messageRepository.getOne(messageId);
     }
 
