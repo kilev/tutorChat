@@ -130,7 +130,9 @@ public class ChatService {
             }
 
         } else {
-
+            MessageReaction messageReaction = getMessageReaction(messageId, reactionName);
+            messageReaction.getAuthors().add(reactionAuthor);
+            messageReactionRepository.save(messageReaction);
         }
 
         return messageRepository.getOne(messageId);
