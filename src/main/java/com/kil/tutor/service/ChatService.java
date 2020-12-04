@@ -2,11 +2,10 @@ package com.kil.tutor.service;
 
 import com.kil.tutor.domain.FindMessagesRequest;
 import com.kil.tutor.domain.MessageReactionUpdate;
+import com.kil.tutor.domain.VoteRequest;
+import com.kil.tutor.domain.Voting;
 import com.kil.tutor.entity.chat.Chat;
-import com.kil.tutor.entity.chat.message.ChatMessage;
-import com.kil.tutor.entity.chat.message.MessageReaction;
-import com.kil.tutor.entity.chat.message.Reaction;
-import com.kil.tutor.entity.chat.message.SimpleMessage;
+import com.kil.tutor.entity.chat.message.*;
 import com.kil.tutor.entity.user.User;
 import com.kil.tutor.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +25,11 @@ public class ChatService {
     private static final int DEFAULT_MESSAGE_PAGE_SIZE = 20;
     private static final int MAX_MESSAGE_PAGE_SIZE = 100;
 
-
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+    private final VoteRepository voteRepository;
+    private final VoteOptionRepository voteOptionRepository;
     private final MessageReactionRepository messageReactionRepository;
     private final ReactionRepository reactionRepository;
 
@@ -38,12 +38,16 @@ public class ChatService {
             ChatRepository chatRepository,
             UserRepository userRepository,
             MessageRepository messageRepository,
+            VoteRepository voteRepository,
+            VoteOptionRepository voteOptionRepository,
             MessageReactionRepository messageReactionRepository,
             ReactionRepository reactionRepository
     ) {
         this.chatRepository = chatRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
+        this.voteRepository = voteRepository;
+        this.voteOptionRepository = voteOptionRepository;
         this.messageReactionRepository = messageReactionRepository;
         this.reactionRepository = reactionRepository;
     }
@@ -66,7 +70,9 @@ public class ChatService {
 
     @Transactional(readOnly = true)
     public Page<ChatMessage> getMessages(FindMessagesRequest request) {
-        int pageSize = request.getPageSize() == 0 ? DEFAULT_MESSAGE_PAGE_SIZE : request.getPageSize();
+        int pageSize = request.getPageSize() == 0 ?
+                DEFAULT_MESSAGE_PAGE_SIZE :
+                Math.min(request.getPageSize(), MAX_MESSAGE_PAGE_SIZE);
         Pageable pageRequest = PageRequest.of(request.getPage(), pageSize, Sort.by("dateTime").descending());
 
         ChatMessage exampleMessage = new ChatMessage();
@@ -104,12 +110,7 @@ public class ChatService {
         }
 
         User reactionAuthor = userRepository.getOne(reactionAuthorId);
-        MessageReaction exampleReaction = MessageReaction.builder()
-                .message(messageRepository.getOne(messageId))
-                .build();
-//        Optional<MessageReaction> existAuthorReaction = messageReactionRepository.findOne(Example.of(exampleReaction));
-
-        List<MessageReaction> messageReactions = messageReactionRepository.findAll(Example.of(exampleReaction));
+        List<MessageReaction> messageReactions = messageReactionRepository.findAllByMessageId(messageId);
         Optional<MessageReaction> existAuthorReaction = messageReactions.stream()
                 .filter(messageReaction -> messageReaction.getAuthors().stream()
                         .anyMatch(author -> author.getId().equals(reactionAuthorId)))
@@ -122,19 +123,15 @@ public class ChatService {
             if (!existReaction.getReaction().getName().equals(reactionName)) {
                 MessageReaction updatedMessageReaction = getMessageReaction(messageId, reactionName);
                 updatedMessageReaction.getAuthors().add(reactionAuthor);
-                messageReactionRepository.save(updatedMessageReaction);
             }
 
             if (existReaction.getAuthors().isEmpty()) {
                 messageReactionRepository.delete(existReaction);
-            } else {
-                messageReactionRepository.save(existReaction);
             }
 
         } else {
             MessageReaction messageReaction = getMessageReaction(messageId, reactionName);
             messageReaction.getAuthors().add(reactionAuthor);
-            messageReactionRepository.save(messageReaction);
         }
 
         messageReactionRepository.flush();
@@ -142,21 +139,13 @@ public class ChatService {
     }
 
     private MessageReaction getMessageReaction(Long messageId, String reactionName) {
-        ChatMessage message = messageRepository.getOne(messageId);
-        Reaction reaction = reactionRepository.getOne(reactionName);
-
-        MessageReaction requiredMessageReaction = MessageReaction.builder()
-                .message(message)
-                .reaction(reaction)
-                .build();
-        Optional<MessageReaction> messageReaction = messageReactionRepository
-                .findOne(Example.of(requiredMessageReaction));
-
-        return messageReaction.orElse(MessageReaction.builder()
-                .message(message)
-                .reaction(reaction)
-                .authors(new ArrayList<>())
-                .build());
+        return messageReactionRepository
+                .findByMessageIdAndReactionName(messageId, reactionName)
+                .orElseGet(() -> messageReactionRepository.save(MessageReaction.builder()
+                        .message(messageRepository.getOne(messageId))
+                        .reaction(reactionRepository.getOne(reactionName))
+                        .authors(new ArrayList<>())
+                        .build()));
     }
 
     @Transactional(readOnly = true)
@@ -170,5 +159,50 @@ public class ChatService {
         return reactionRepository.getAllIds().stream()
                 .map(Reaction::getName)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Vote createVote(VoteRequest voteRequest) {
+        Vote vote = new Vote();
+        vote.setMessageText(voteRequest.getTitle());
+        vote.setAuthor(userRepository.getOne(voteRequest.getAuthorId()));
+        vote.setChat(chatRepository.getOne(voteRequest.getChatId()));
+
+        List<VoteOption> voteOptions = voteRequest.getOptions().stream()
+                .map(VoteOption::new)
+                .collect(Collectors.toList());
+        vote.setOptions(voteOptions);
+
+        return messageRepository.save(vote);
+    }
+
+    @Transactional
+    public Vote voting(Voting voting) {
+        Long voteId = voting.getVoteId();
+        Long optionId = voting.getOptionId();
+        Long authorId = voting.getAuthorId();
+
+        if (!userRepository.existsById(authorId)) {
+            throw new IllegalArgumentException("No user found with id: " + authorId);
+        }
+
+        Optional<Vote> chatVote = voteRepository.findById(voteId);
+        Vote vote = chatVote.orElseThrow(() -> new IllegalArgumentException("No Vote found with id: " + voteId));
+
+        Optional<VoteOption> votedOption = vote.getOptions().stream()
+                .filter(option -> option.getVotedUsers().stream()
+                        .anyMatch(votedUser -> votedUser.getId().equals(authorId)))
+                .findAny();
+
+        votedOption.ifPresent(oldOption -> oldOption.getVotedUsers().removeIf(user -> user.getId().equals(authorId)));
+
+        if (votedOption.isPresent() && !votedOption.get().getId().equals(optionId)) {
+            VoteOption targetOption = voteOptionRepository.findById(optionId)
+                    .orElseThrow(() -> new IllegalArgumentException("No VoteOption found with id: " + optionId));
+            targetOption.getVotedUsers().add(userRepository.getOne(authorId));
+        }
+
+        voteOptionRepository.flush();
+        return voteRepository.getOne(voteId);
     }
 }

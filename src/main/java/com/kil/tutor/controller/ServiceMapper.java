@@ -2,6 +2,8 @@ package com.kil.tutor.controller;
 
 import com.kil.tutor.domain.FindMessagesRequest;
 import com.kil.tutor.domain.MessageReactionUpdate;
+import com.kil.tutor.domain.VoteRequest;
+import com.kil.tutor.domain.Voting;
 import com.kil.tutor.domain.auth.UserAuth;
 import com.kil.tutor.domain.auth.UserAuthRefreshRequest;
 import com.kil.tutor.domain.auth.UserAuthRequest;
@@ -15,16 +17,15 @@ import com.kil.tutor.dto.chat.message.*;
 import com.kil.tutor.dto.chat.reaction.MessageReactionsInfo;
 import com.kil.tutor.dto.chat.reaction.ReactionInfo;
 import com.kil.tutor.dto.chat.reaction.WebSocketReaction;
+import com.kil.tutor.dto.chat.vote.CreateVoteRequest;
+import com.kil.tutor.dto.chat.vote.VotingRequest;
 import com.kil.tutor.dto.user.StudentInfo;
 import com.kil.tutor.dto.user.TutorInfo;
 import com.kil.tutor.dto.user.UserInfo;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.DirectChat;
 import com.kil.tutor.entity.chat.GroupChat;
-import com.kil.tutor.entity.chat.message.ChatMessage;
-import com.kil.tutor.entity.chat.message.MessageReaction;
-import com.kil.tutor.entity.chat.message.SimpleMessage;
-import com.kil.tutor.entity.chat.message.Vote;
+import com.kil.tutor.entity.chat.message.*;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
 import com.kil.tutor.entity.user.User;
@@ -115,15 +116,16 @@ public abstract class ServiceMapper {
     @Mapping(target = "userId", source = "author.id")
     protected abstract SimpleMessageInfo map(SimpleMessage message);
 
-    //    @Mapping(target = "authorId", source = "author.id")
-    protected VoteInfo map(Vote message) {
-        return null;//TODO
-    }
+    @Mapping(target = "text", source = "messageText")
+    @Mapping(target = "userId", source = "author.id")
+    protected abstract VoteInfo map(Vote vote);
+
+    @Mapping(target = "votedUserIds", source = "votedUsers")
+    protected abstract VoteOptionInfo map(VoteOption option);
 
     public abstract FindMessagesRequest map(Long chatId, GetMessagesRequest request);
 
     public abstract List<ReactionInfo> mapReactions(List<MessageReaction> reactions);
-
 
 
     @Mapping(target = "name", source = "reaction.name")
@@ -133,4 +135,8 @@ public abstract class ServiceMapper {
     public abstract MessageReactionUpdate map(WebSocketReaction reaction);
 
     public abstract MessageReactionsInfo mapToMessageReactionInfo(Long messageId, Long chatId, List<MessageReaction> reactions);
+
+    public abstract VoteRequest map(CreateVoteRequest request);
+
+    public abstract Voting map(VotingRequest request);
 }

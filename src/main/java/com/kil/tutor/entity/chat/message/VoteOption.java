@@ -16,6 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class VoteOption extends BaseEntity {
+
+    public VoteOption(String optionText){
+        this.optionText = optionText;
+    }
+
     @NotBlank
     private String optionText;
 

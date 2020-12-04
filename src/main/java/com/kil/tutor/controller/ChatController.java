@@ -6,10 +6,14 @@ import com.kil.tutor.dto.chat.GetIconIdsResponse;
 import com.kil.tutor.dto.chat.WebSocketMessage;
 import com.kil.tutor.dto.chat.message.GetMessagesRequest;
 import com.kil.tutor.dto.chat.message.GetMessagesResponse;
+import com.kil.tutor.dto.chat.message.VoteInfo;
 import com.kil.tutor.dto.chat.reaction.MessageReactionsInfo;
 import com.kil.tutor.dto.chat.reaction.WebSocketReaction;
+import com.kil.tutor.dto.chat.vote.CreateVoteRequest;
+import com.kil.tutor.dto.chat.vote.VotingRequest;
 import com.kil.tutor.entity.chat.Chat;
 import com.kil.tutor.entity.chat.message.ChatMessage;
+import com.kil.tutor.entity.chat.message.Vote;
 import com.kil.tutor.entity.user.User;
 import com.kil.tutor.service.ChatService;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +89,20 @@ public class ChatController {
         sendToChatByChatId(reaction.getChatId(), "/reactions", messageReactionsInfo);
     }
 
+    @MessageMapping("chat/vote/create")
+    public void createVote(@Valid @Payload CreateVoteRequest request) {
+        Vote vote = chatService.createVote(mapper.map(request));
+        VoteInfo voteInfo = mapper.map(vote);
+        sendToChatByChatId(request.getChatId(), "/votes", voteInfo);
+    }
+
+    @MessageMapping("chat/vote/voting")
+    public void voting(@Valid @Payload VotingRequest request) {
+        Vote vote = chatService.voting(mapper.map(request));
+        VoteInfo voteInfo = mapper.map(vote);
+        sendToChatByChatId(request.getChatId(), "/voting", voteInfo);
+    }
+
     @MessageExceptionHandler
     @SendToUser("/error")
     public String handleException(Throwable exception) {
@@ -100,6 +118,7 @@ public class ChatController {
 
     @GetMapping(value = ApiConsts.REACTIONS + "/{reactionName}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getReactionImage(@PathVariable String reactionName) {
+        log.info("icon request!");
         return chatService.getReactionImage(reactionName);
     }
 
