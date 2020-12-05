@@ -3,10 +3,7 @@ package com.kil.tutor;
 import com.kil.tutor.domain.Role;
 import com.kil.tutor.entity.chat.DirectChat;
 import com.kil.tutor.entity.chat.GroupChat;
-import com.kil.tutor.entity.chat.message.ChatMessage;
-import com.kil.tutor.entity.chat.message.MessageReaction;
-import com.kil.tutor.entity.chat.message.Reaction;
-import com.kil.tutor.entity.chat.message.SimpleMessage;
+import com.kil.tutor.entity.chat.message.*;
 import com.kil.tutor.entity.user.Student;
 import com.kil.tutor.entity.user.Tutor;
 import com.kil.tutor.repository.*;
@@ -22,12 +19,14 @@ import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Service
 public class InitSampleDataService {
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
+    private final VoteOptionRepository optionRepository;
     private final ReactionRepository reactionRepository;
     private final MessageReactionRepository messageReactionRepository;
     private final UserRepository userRepository;
@@ -37,6 +36,7 @@ public class InitSampleDataService {
     public InitSampleDataService(
             ChatRepository chatRepository,
             MessageRepository messageRepository,
+            VoteOptionRepository optionRepository,
             ReactionRepository reactionRepository,
             MessageReactionRepository messageReactionRepository,
             UserRepository userRepository,
@@ -44,6 +44,7 @@ public class InitSampleDataService {
     ) {
         this.chatRepository = chatRepository;
         this.messageRepository = messageRepository;
+        this.optionRepository = optionRepository;
         this.reactionRepository = reactionRepository;
         this.messageReactionRepository = messageReactionRepository;
         this.userRepository = userRepository;
@@ -89,7 +90,21 @@ public class InitSampleDataService {
         initGroupMessage.setChat(group);
         initGroupMessage.setAuthor(tutor);
         initGroupMessage.setMessageText("Привет, студенты!");
-        messageRepository.saveAll(Arrays.asList(initDirectMessage, initGroupMessage));
+
+
+        VoteOption firstOption = new VoteOption("Завтра");
+        VoteOption secondOption = new VoteOption("Через неделю");
+        VoteOption thirdOption = new VoteOption("Через месяц");
+        List<VoteOption> initGroupVoteOptions = Arrays.asList(firstOption, secondOption, thirdOption);
+        optionRepository.saveAll(initGroupVoteOptions);
+
+        Vote initGroupVote = new Vote();
+        initGroupVote.setChat(group);
+        initGroupVote.setAuthor(tutor);
+        initGroupVote.setMessageText("Когда будем сдавать долги?");
+        initGroupVote.setOptions(initGroupVoteOptions);
+
+        messageRepository.saveAll(Arrays.asList(initDirectMessage, initGroupMessage, initGroupVote));
 
         Reaction likeReaction = new Reaction();
         likeReaction.setName("LIKE");

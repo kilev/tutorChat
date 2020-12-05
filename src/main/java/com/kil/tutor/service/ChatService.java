@@ -173,6 +173,7 @@ public class ChatService {
                 .collect(Collectors.toList());
         vote.setOptions(voteOptions);
 
+        voteOptionRepository.saveAll(voteOptions);
         return messageRepository.save(vote);
     }
 
