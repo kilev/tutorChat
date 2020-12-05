@@ -96,6 +96,7 @@ public class ChatController {
         sendToChatByChatId(request.getChatId(), "/votes", voteInfo);
     }
 
+    @Transactional
     @MessageMapping("chat/vote/voting")
     public void voting(@Valid @Payload VotingRequest request) {
         Vote vote = chatService.voting(mapper.map(request));

@@ -197,7 +197,7 @@ public class ChatService {
 
         votedOption.ifPresent(oldOption -> oldOption.getVotedUsers().removeIf(user -> user.getId().equals(authorId)));
 
-        if (votedOption.isPresent() && !votedOption.get().getId().equals(optionId)) {
+        if ((votedOption.isPresent() && !votedOption.get().getId().equals(optionId)) || votedOption.isEmpty()) {
             VoteOption targetOption = voteOptionRepository.findById(optionId)
                     .orElseThrow(() -> new IllegalArgumentException("No VoteOption found with id: " + optionId));
             targetOption.getVotedUsers().add(userRepository.getOne(authorId));
