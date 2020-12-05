@@ -92,14 +92,14 @@ public class ChatController {
     @MessageMapping("chat/vote/create")
     public void createVote(@Valid @Payload CreateVoteRequest request) {
         Vote vote = chatService.createVote(mapper.map(request));
-        VoteInfo voteInfo = mapper.map(vote);
+        VoteInfo voteInfo = mapper.map(vote, request.getChatId());
         sendToChatByChatId(request.getChatId(), "/votes", voteInfo);
     }
 
     @MessageMapping("chat/vote/voting")
     public void voting(@Valid @Payload VotingRequest request) {
         Vote vote = chatService.voting(mapper.map(request));
-        VoteInfo voteInfo = mapper.map(vote);
+        VoteInfo voteInfo = mapper.map(vote, request.getChatId());
         sendToChatByChatId(request.getChatId(), "/voting", voteInfo);
     }
 

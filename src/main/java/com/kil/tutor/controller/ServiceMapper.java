@@ -116,9 +116,14 @@ public abstract class ServiceMapper {
     @Mapping(target = "userId", source = "author.id")
     protected abstract SimpleMessageInfo map(SimpleMessage message);
 
+    @Mapping(target = "chatId", ignore = true)
     @Mapping(target = "text", source = "messageText")
     @Mapping(target = "userId", source = "author.id")
     protected abstract VoteInfo map(Vote vote);
+
+    @Mapping(target = "text", source = "vote.messageText")
+    @Mapping(target = "userId", source = "vote.author.id")
+    protected abstract VoteInfo map(Vote vote, Long chatId);
 
     @Mapping(target = "votedUserIds", source = "votedUsers")
     protected abstract VoteOptionInfo map(VoteOption option);
