@@ -84,13 +84,12 @@ public class InitSampleDataService {
         ChatMessage initDirectMessage = new SimpleMessage();
         initDirectMessage.setChat(direct);
         initDirectMessage.setAuthor(tutor);
-        initDirectMessage.setMessageText("Привет, студент!");
+        initDirectMessage.setMessageText("Здравствуй, Иван. Не забудьте сдать курсовую до следующего понедельника.");
 
         ChatMessage initGroupMessage = new SimpleMessage();
         initGroupMessage.setChat(group);
         initGroupMessage.setAuthor(tutor);
-        initGroupMessage.setMessageText("Привет, студенты!");
-
+        initGroupMessage.setMessageText("Здрвствуйте студенты! С началом учебного года вас!");
 
         VoteOption firstOption = new VoteOption("Завтра");
         VoteOption secondOption = new VoteOption("Через неделю");
