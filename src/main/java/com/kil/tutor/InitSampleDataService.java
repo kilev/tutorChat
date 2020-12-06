@@ -57,7 +57,7 @@ public class InitSampleDataService {
         Tutor tutor = new Tutor();
         tutor.setUsername("tutor");
         tutor.setPassword(passwordEncoder.encode("tutor"));
-        tutor.setFirstName("Томара");
+        tutor.setFirstName("Тамара");
         tutor.setMiddleName("Ивановна");
         tutor.setLastName("Иванова");
         tutor.setRoles(Collections.singletonList(Role.USER));

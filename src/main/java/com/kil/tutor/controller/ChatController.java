@@ -119,7 +119,6 @@ public class ChatController {
 
     @GetMapping(value = ApiConsts.REACTIONS + "/{reactionName}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getReactionImage(@PathVariable String reactionName) {
-        log.info("icon request!");
         return chatService.getReactionImage(reactionName);
     }
 
