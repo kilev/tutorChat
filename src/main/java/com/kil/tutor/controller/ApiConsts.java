@@ -14,7 +14,7 @@ public class ApiConsts {
 
     public static final String USER = "/user";
     public static final String AVATAR = "/avatar";
-
+    public static final String ANDROID_AVATAR = "/android/avatar";
 
     public static final String CHAT = "/chat";
     public static final String MESSAGES = "/messages";
