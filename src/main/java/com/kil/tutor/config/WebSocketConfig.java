@@ -68,8 +68,6 @@ public class WebSocketConfig extends AbstractSecurityWebSocketMessageBrokerConfi
 //                        SimpMessageType.DISCONNECT
 //                ).permitAll()
 //                .anyMessage().authenticated();
-
-
         .anyMessage().permitAll();
     }
 

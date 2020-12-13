@@ -32,10 +32,6 @@ spring:
         web-allow-others: true
 security:
   jwt:
-    expirationTime: P2D #PT15M
+    expirationTime: P2D #set PT15M if refresh token enabled
 server:
   port: 8081
-
-#hibernate:
-#  jdbc:
-#    use_streams_for_binary=false:false

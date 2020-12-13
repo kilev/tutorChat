@@ -124,7 +124,7 @@ public class InitSampleDataService {
         MessageReaction initGroupMessageReaction = new MessageReaction();
         initGroupMessageReaction.setMessage(initGroupMessage);
         initGroupMessageReaction.setReaction(dislikeReaction);
-        initGroupMessageReaction.setAuthors(Collections.singletonList(tutor));
+        initGroupMessageReaction.setAuthors(Collections.singletonList(student));
         messageReactionRepository.saveAll(Arrays.asList(initDirectMessageReaction, initGroupMessageReaction));
     }
 
