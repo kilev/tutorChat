@@ -71,15 +71,28 @@ public class InitSampleDataService {
         student.setLastName("Иванов");
         student.setGroupName("AVT-713");
         student.setRoles(Collections.singletonList(Role.USER));
-        userRepository.saveAll(Arrays.asList(tutor, student));
+
+        Student studentPetya = new Student();
+        studentPetya.setUsername("petya");
+        studentPetya.setPassword(passwordEncoder.encode("petya"));
+        studentPetya.setFirstName("Петр");
+        studentPetya.setMiddleName("Алексеевич");
+        studentPetya.setLastName("Касимов");
+        studentPetya.setGroupName("AVT-713");
+        studentPetya.setRoles(Collections.singletonList(Role.USER));
+        userRepository.saveAll(Arrays.asList(tutor, student, studentPetya));
 
         DirectChat direct = new DirectChat();
-        direct.setParticipants(Arrays.asList(tutor, student));
+        direct.setParticipants(Arrays.asList(tutor, studentPetya));
 
         GroupChat group = new GroupChat();
-        group.setParticipants(Arrays.asList(tutor, student));
+        group.setParticipants(Arrays.asList(tutor, student, studentPetya));
         group.setName("AVT-713");
-        chatRepository.saveAll(Arrays.asList(direct, group));
+
+        GroupChat groupAvt712 = new GroupChat();
+        groupAvt712.setParticipants(Arrays.asList(tutor, studentPetya));
+        groupAvt712.setName("AVT-712");
+        chatRepository.saveAll(Arrays.asList(direct, group, groupAvt712));
 
         ChatMessage initDirectMessage = new SimpleMessage();
         initDirectMessage.setChat(direct);
@@ -124,7 +137,7 @@ public class InitSampleDataService {
         MessageReaction initGroupMessageReaction = new MessageReaction();
         initGroupMessageReaction.setMessage(initGroupMessage);
         initGroupMessageReaction.setReaction(dislikeReaction);
-        initGroupMessageReaction.setAuthors(Collections.singletonList(student));
+        initGroupMessageReaction.setAuthors(Arrays.asList(student, studentPetya));
         messageReactionRepository.saveAll(Arrays.asList(initDirectMessageReaction, initGroupMessageReaction));
     }
 
