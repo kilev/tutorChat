@@ -151,7 +151,7 @@ public class InitSampleDataService {
         groupAVT713.setName("AVT-713");
 
         GroupChat groupAvt712 = new GroupChat();
-        groupAvt712.setParticipants(Arrays.asList(tutor1, student3, student4, student5));
+        groupAvt712.setParticipants(Arrays.asList(tutor, student3, student4, student5));
         groupAvt712.setName("AVT-712");
         chatRepository.saveAll(Arrays.asList(direct1, direct2, direct, groupAVT713, groupAvt712));
 
