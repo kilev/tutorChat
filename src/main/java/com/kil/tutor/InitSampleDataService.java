@@ -138,7 +138,7 @@ public class InitSampleDataService {
         userRepository.saveAll(Arrays.asList(tutor, tutor1, student, student1, student2, student3, student4, student5, studentPetya));
 
         DirectChat direct1 = new DirectChat();
-        direct1.setParticipants(Arrays.asList(tutor, student));
+        direct1.setParticipants(Arrays.asList(tutor, student1));
 
         DirectChat direct2 = new DirectChat();
         direct2.setParticipants(Arrays.asList(tutor, studentPetya));
@@ -158,7 +158,7 @@ public class InitSampleDataService {
         ChatMessage initDirectMessage = new SimpleMessage();
         initDirectMessage.setChat(direct1);
         initDirectMessage.setAuthor(tutor);
-        initDirectMessage.setMessageText("Здравствуй, Ника. Не забудьте сдать курсовую до следующего понедельника.");
+        initDirectMessage.setMessageText("Здравствуте, Ника. Не забудьте сдать курсовую до следующего понедельника.");
 
         ChatMessage initGroupMessage = new SimpleMessage();
         initGroupMessage.setChat(groupAVT713);
