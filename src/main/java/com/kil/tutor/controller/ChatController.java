@@ -111,12 +111,6 @@ public class ChatController {
         return exception.getMessage();
     }
 
-    private void sendToChatByChatId(Long chatId, String destination, Object message) {
-        List<User> chatParticipants = chatService.getChatParticipants(chatId);
-        chatParticipants.forEach(user -> messagingTemplate
-                .convertAndSendToUser(user.getId().toString(), destination, message));
-    }
-
     @GetMapping(value = ApiConsts.REACTIONS + "/{reactionName}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getReactionImage(@PathVariable String reactionName) {
         return chatService.getReactionImage(reactionName);
@@ -127,6 +121,12 @@ public class ChatController {
         GetIconIdsResponse response = new GetIconIdsResponse();
         response.setAllIconIds(chatService.getAllIconIds());
         return response;
+    }
+
+    private void sendToChatByChatId(Long chatId, String destination, Object message) {
+        List<User> chatParticipants = chatService.getChatParticipants(chatId);
+        chatParticipants.forEach(user -> messagingTemplate
+                .convertAndSendToUser(user.getId().toString(), destination, message));
     }
 
 }

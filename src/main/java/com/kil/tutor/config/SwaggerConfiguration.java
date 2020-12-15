@@ -29,24 +29,8 @@ public class SwaggerConfiguration {
                 .title("Tutor Chat API")
                 .version("1.0")
                 .description("API for Tutor chat Application")
-//                .contact(new Contact("Kil Alexander", "https://vk.com/kilev", "xyz@email.com"))
-                .contact(new Contact("STOMP Api", "/websockets.json", null))
+                .contact(new Contact("Kil Alexander", "https://vk.com/kilev", "xyz@email.com"))
                 .license("Apache License Version 2.0")
                 .build();
     }
-
-//    @Primary
-//    @Bean
-//    public SwaggerResourcesProvider swaggerResourcesProvider(InMemorySwaggerResourcesProvider defaultResourcesProvider) {
-//        return () -> {
-//            SwaggerResource wsResource = new SwaggerResource();
-//            wsResource.setName("ws endpoints");
-//            wsResource.setSwaggerVersion("2.0");
-//            wsResource.setLocation("/websockets.json");
-//
-//            List<SwaggerResource> resources = new ArrayList<>(defaultResourcesProvider.get());
-//            resources.add(wsResource);
-//            return resources;
-//        };
-//    }
 }

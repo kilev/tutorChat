@@ -57,18 +57,27 @@ public class InitSampleDataService {
         Tutor tutor = new Tutor();
         tutor.setUsername("tutor");
         tutor.setPassword(passwordEncoder.encode("tutor"));
-        tutor.setFirstName("Тамара");
-        tutor.setMiddleName("Ивановна");
-        tutor.setLastName("Иванова");
+        tutor.setFirstName("Степан");
+        tutor.setMiddleName("Георгиевич");
+        tutor.setLastName("Тарасов");
         tutor.setRoles(Collections.singletonList(Role.USER));
-        tutor.setStatus("Готова принимать долги!");
+        tutor.setStatus("Готов принимать долги!");
+
+        Tutor tutor1 = new Tutor();
+        tutor1.setUsername("tutor_tretyakov");
+        tutor1.setPassword(passwordEncoder.encode("tutor_tretyakov"));
+        tutor1.setFirstName("Роман");
+        tutor1.setMiddleName("Кириллович");
+        tutor1.setLastName("Третьяков");
+        tutor1.setRoles(Collections.singletonList(Role.USER));
+        tutor1.setStatus("На совещании.");
 
         Student student = new Student();
-        student.setUsername("student");
-        student.setPassword(passwordEncoder.encode("student"));
-        student.setFirstName("Иван");
-        student.setMiddleName("Иванович");
-        student.setLastName("Иванов");
+        student.setUsername("student_starostina");
+        student.setPassword(passwordEncoder.encode("student_starostina"));
+        student.setFirstName("Ника");
+        student.setMiddleName("Ивановна");
+        student.setLastName("Старостина");
         student.setGroupName("AVT-713");
         student.setRoles(Collections.singletonList(Role.USER));
 
@@ -77,30 +86,82 @@ public class InitSampleDataService {
         studentPetya.setPassword(passwordEncoder.encode("petya"));
         studentPetya.setFirstName("Петр");
         studentPetya.setMiddleName("Алексеевич");
-        studentPetya.setLastName("Касимов");
+        studentPetya.setLastName("Сакимов");
         studentPetya.setGroupName("AVT-713");
+
+        Student student1 = new Student();
+        student1.setUsername("student");
+        student1.setPassword(passwordEncoder.encode("student"));
+        student1.setFirstName("Максим");
+        student1.setMiddleName("Ярославович");
+        student1.setLastName("Соколов");
+        student1.setGroupName("AVT-713");
+        student1.setRoles(Collections.singletonList(Role.USER));
+
+        Student student2 = new Student();
+        student2.setUsername("student_smirnov");
+        student2.setPassword(passwordEncoder.encode("student_smirnov"));
+        student2.setFirstName("Даниил");
+        student2.setMiddleName("Иванович");
+        student2.setLastName("Смирнов");
+        student2.setGroupName("AVT-713");
+        student2.setRoles(Collections.singletonList(Role.USER));
+
+        Student student3 = new Student();
+        student3.setUsername("student_salnikova");
+        student3.setPassword(passwordEncoder.encode("student_salnikova"));
+        student3.setFirstName("Мия");
+        student3.setMiddleName("Данииловна");
+        student3.setLastName("Сальникова");
+        student3.setGroupName("AVT-712");
+        student3.setRoles(Collections.singletonList(Role.USER));
+
+        Student student4 = new Student();
+        student4.setUsername("student_simonova");
+        student4.setPassword(passwordEncoder.encode("student_simonova"));
+        student4.setFirstName("Карина");
+        student4.setMiddleName("Олеговна");
+        student4.setLastName("Симонова");
+        student4.setGroupName("AVT-712");
+        student4.setRoles(Collections.singletonList(Role.USER));
+
+        Student student5 = new Student();
+        student5.setUsername("student_solovyeva");
+        student5.setPassword(passwordEncoder.encode("student_solovyeva"));
+        student5.setFirstName("София");
+        student5.setMiddleName("Александровна");
+        student5.setLastName("Соловьева");
+        student5.setGroupName("AVT-712");
+        student5.setRoles(Collections.singletonList(Role.USER));
+
         studentPetya.setRoles(Collections.singletonList(Role.USER));
-        userRepository.saveAll(Arrays.asList(tutor, student, studentPetya));
+        userRepository.saveAll(Arrays.asList(tutor, tutor1, student, student1, student2, student3, student4, student5, studentPetya));
+
+        DirectChat direct1 = new DirectChat();
+        direct1.setParticipants(Arrays.asList(tutor, student));
+
+        DirectChat direct2 = new DirectChat();
+        direct2.setParticipants(Arrays.asList(tutor, studentPetya));
 
         DirectChat direct = new DirectChat();
-        direct.setParticipants(Arrays.asList(tutor, studentPetya));
+        direct.setParticipants(Arrays.asList(tutor, tutor1));
 
-        GroupChat group = new GroupChat();
-        group.setParticipants(Arrays.asList(tutor, student, studentPetya));
-        group.setName("AVT-713");
+        GroupChat groupAVT713 = new GroupChat();
+        groupAVT713.setParticipants(Arrays.asList(tutor, student, studentPetya, student1, student2));
+        groupAVT713.setName("AVT-713");
 
         GroupChat groupAvt712 = new GroupChat();
-        groupAvt712.setParticipants(Arrays.asList(tutor, studentPetya));
+        groupAvt712.setParticipants(Arrays.asList(tutor1, student3, student4, student5));
         groupAvt712.setName("AVT-712");
-        chatRepository.saveAll(Arrays.asList(direct, group, groupAvt712));
+        chatRepository.saveAll(Arrays.asList(direct1, direct2, direct, groupAVT713, groupAvt712));
 
         ChatMessage initDirectMessage = new SimpleMessage();
-        initDirectMessage.setChat(direct);
+        initDirectMessage.setChat(direct1);
         initDirectMessage.setAuthor(tutor);
-        initDirectMessage.setMessageText("Здравствуй, Иван. Не забудьте сдать курсовую до следующего понедельника.");
+        initDirectMessage.setMessageText("Здравствуй, Ника. Не забудьте сдать курсовую до следующего понедельника.");
 
         ChatMessage initGroupMessage = new SimpleMessage();
-        initGroupMessage.setChat(group);
+        initGroupMessage.setChat(groupAVT713);
         initGroupMessage.setAuthor(tutor);
         initGroupMessage.setMessageText("Здрвствуйте студенты! С началом учебного года вас!");
 
@@ -111,7 +172,7 @@ public class InitSampleDataService {
         optionRepository.saveAll(initGroupVoteOptions);
 
         Vote initGroupVote = new Vote();
-        initGroupVote.setChat(group);
+        initGroupVote.setChat(groupAVT713);
         initGroupVote.setAuthor(tutor);
         initGroupVote.setMessageText("Когда будем сдавать долги?");
         initGroupVote.setOptions(initGroupVoteOptions);
