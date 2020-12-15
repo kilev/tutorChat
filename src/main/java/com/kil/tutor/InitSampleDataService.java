@@ -180,7 +180,7 @@ public class InitSampleDataService {
 
         ChatMessage answerGroupMessage = new SimpleMessage();
         answerGroupMessage.setChat(groupAVT713);
-        answerGroupMessage.setAuthor(tutor);
+        answerGroupMessage.setAuthor(student3);
         answerGroupMessage.setMessageText("Степан Георгиевич, а отчеты по ботанике обязательно делать?");
 
         messageRepository.saveAll(Arrays.asList(initDirectMessage, initGroupMessage, initGroupVote, answerGroupMessage));
