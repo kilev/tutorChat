@@ -166,6 +166,7 @@ public class InitSampleDataService {
         initGroupMessage.setMessageText("Здрвствуйте студенты! С началом учебного года вас!");
 
         VoteOption firstOption = new VoteOption("Завтра");
+        firstOption.setVotedUsers(Arrays.asList(student1, student2));
         VoteOption secondOption = new VoteOption("Через неделю");
         VoteOption thirdOption = new VoteOption("Через месяц");
         List<VoteOption> initGroupVoteOptions = Arrays.asList(firstOption, secondOption, thirdOption);
@@ -177,7 +178,12 @@ public class InitSampleDataService {
         initGroupVote.setMessageText("Когда будем сдавать долги?");
         initGroupVote.setOptions(initGroupVoteOptions);
 
-        messageRepository.saveAll(Arrays.asList(initDirectMessage, initGroupMessage, initGroupVote));
+        ChatMessage answerGroupMessage = new SimpleMessage();
+        answerGroupMessage.setChat(groupAVT713);
+        answerGroupMessage.setAuthor(tutor);
+        answerGroupMessage.setMessageText("Степан Георгиевич, а отчеты по ботанике обязательно делать?");
+
+        messageRepository.saveAll(Arrays.asList(initDirectMessage, initGroupMessage, initGroupVote, answerGroupMessage));
 
         Reaction likeReaction = new Reaction();
         likeReaction.setName("LIKE");
