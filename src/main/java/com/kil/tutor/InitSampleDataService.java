@@ -199,7 +199,7 @@ public class InitSampleDataService {
         MessageReaction initDirectMessageReaction = new MessageReaction();
         initDirectMessageReaction.setMessage(initDirectMessage);
         initDirectMessageReaction.setReaction(likeReaction);
-        initDirectMessageReaction.setAuthors(Collections.singletonList(student));
+        initDirectMessageReaction.setAuthors(Collections.singletonList(student1));
 
         MessageReaction initGroupMessageReaction = new MessageReaction();
         initGroupMessageReaction.setMessage(initGroupMessage);
