@@ -158,7 +158,7 @@ public class InitSampleDataService {
         ChatMessage initDirectMessage = new SimpleMessage();
         initDirectMessage.setChat(direct1);
         initDirectMessage.setAuthor(tutor);
-        initDirectMessage.setMessageText("Здравствуте, Петр. Не забудьте сдать курсовую до следующего понедельника.");
+        initDirectMessage.setMessageText("Здравствуте, Пётр. Не забудьте сдать курсовую до следующего понедельника.");
 
         ChatMessage initGroupMessage = new SimpleMessage();
         initGroupMessage.setChat(groupAVT713);
