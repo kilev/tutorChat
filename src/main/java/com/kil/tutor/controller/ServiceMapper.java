@@ -76,17 +76,6 @@ public abstract class ServiceMapper {
     @Mapping(target = "id", source = "direct.id")
     protected abstract DirectInfo map(DirectChat direct, Long requestedUserId, Long unreadMessageCount, MessageInfo lastMessage);
 
-//    @AfterMapping
-//    protected void afterDirectMap(
-//            @MappingTarget DirectInfo directInfo,
-//            DirectChat direct,
-//            Long requestedUserId,
-//            Long unreadMessageCount,
-//            MessageInfo lastMessage
-//    ) {
-//        directInfo.set
-//    }
-
     @Mapping(target = "id", source = "group.id")
     protected abstract GroupInfo map(GroupChat group, Long unreadMessageCount, MessageInfo lastMessage);
 
